@@ -37,7 +37,7 @@
   import { javascript } from '@codemirror/lang-javascript'
   import { oneDark } from '@codemirror/theme-one-dark'
   import { parser } from './parser'
-  import { tp3 } from './testSFC'
+  import { tp0 } from './testSFC'
   export default {
     name: 'x-editor',
     components: {
@@ -45,7 +45,7 @@
     },
     setup() {
       const iframeRef = ref('')
-      const code = ref(tp3)
+      const code = ref(tp0)
       const extensions = [javascript(), oneDark]
       const onPreview = () => {
         try {

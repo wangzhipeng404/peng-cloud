@@ -1,18 +1,9 @@
 export const tp0 = `
 <template>
-  <div>
-  <div class="blue">hello word</div>
-  <input v-model="val" />
-  </div>
+  <div class="blue">{{msg}}</div>
 </template>
 <script setup>
-  const val = ref('')
-  onMounted(() => {
-    console.log('onMounted')
-  })
-  watchEffect(() => {
-    console.log(val.value)
-  })
+  const msg = ref('Hello word')
 </script>
 <style lang="styl" scoped>
 .blue
