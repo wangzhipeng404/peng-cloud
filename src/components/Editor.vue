@@ -20,7 +20,7 @@
     <div class="preview-container">
       <div class="preview-wrap">
         <iframe
-          src="../app/index.html"
+          src="http://localhost:8081"
           frameborder="0"
           style="height: 70vh;width: 100%;"
           id="preview-iframe"

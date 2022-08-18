@@ -6,8 +6,8 @@
     "serve": "vue-cli-service serve",
     "mobile": "vue-cli-service serve ./src/mobile.js",
     "build": "vue-cli-service build",
-    "build:web": "vue-cli-service build --dest dist/web",
-    "build:app": "vue-cli-service build ./src/mobile.js --dest dist/app",
+    "build:web": "vue-cli-service build --dest dist/web --modern",
+    "build:app": "vue-cli-service build ./src/mobile.js --dest dist/app --modern",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -22,6 +22,10 @@
     "element-plus": "^2.2.10",
     "fs": "0.0.1-security",
     "node-polyfill-webpack-plugin": "^2.0.0",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "stylus": "^0.58.1",
     "stylus-loader": "^7.0.0",
     "vant": "^3.5.2",
