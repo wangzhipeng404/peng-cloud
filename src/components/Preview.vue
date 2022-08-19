@@ -26,6 +26,7 @@ export default {
     }
     onMounted(() => {
       window.addEventListener('message', onMessage)
+      // window.opener.postMessage({ type: 'preview2editor', data: {}, key: 'mounted' }, '*')
       window.parent.postMessage({ type: 'preview2editor', data: {}, key: 'mounted' }, '*')
     })
     return {

@@ -20,7 +20,7 @@
     <div class="preview-container">
       <div class="preview-wrap">
         <iframe
-          src="http://localhost:8081"
+          src="http://localhost:8082"
           frameborder="0"
           style="height: 70vh;width: 100%;"
           id="preview-iframe"
@@ -45,11 +45,13 @@
     },
     setup() {
       const iframeRef = ref('')
+      // const previewWindow = ref('')
       const code = ref(tp0)
       const extensions = [javascript(), oneDark]
       const onPreview = () => {
         try {
         const res = parser(code.value)
+        // previewWindow.value.postMessage({ type: 'editore2preview', data: res }, '*')
         iframeRef.value.contentWindow.postMessage({ type: 'editore2preview', data: res }, '*')
         } catch(e) {
           console.log(e)
@@ -59,10 +61,16 @@
       const { data: { type, key } } = e
       if (type == 'preview2editor') {
         console.log(type, key)
+        if (key === 'mounted') {
+          onPreview()
+        }
       }
     }
       onMounted(() => {
         window.addEventListener('message', onMessage)
+        // if (!previewWindow.value) {
+        //   previewWindow.value = window.open('http://localhost:8082/')
+        // }
         iframeRef.value = document.getElementById('preview-iframe')
         iframeRef.value.onload = function () {
           onPreview()

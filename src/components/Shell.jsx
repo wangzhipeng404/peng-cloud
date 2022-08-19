@@ -1,5 +1,5 @@
-import { onMounted, onUnmounted, defineComponent, ref, h, computed, watchEffect } from 'vue';
-import { insertStyle, createComponent } from './parser'
+import { onMounted, onUnmounted, defineComponent, ref, h, computed, watchEffect, defineAsyncComponent } from 'vue';
+import { createComponent, insertStyle } from './parser'
 
 
 export default defineComponent({
@@ -22,7 +22,7 @@ export default defineComponent({
         }}
       }
       try {
-        comp = createComponent(props.script)
+        comp = defineAsyncComponent(() => createComponent(props.script))
       } catch (e) {
         comp = { 
           render () {

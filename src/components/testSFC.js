@@ -3,6 +3,7 @@ export const tp0 = `
   <div class="blue">{{msg}}</div>
 </template>
 <script setup>
+  import { ref } from 'vue'
   const msg = ref('Hello word')
 </script>
 <style lang="styl" scoped>

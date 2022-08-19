@@ -6,12 +6,23 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>online complier</title>
+    <script>
+      var process = {
+        env: {
+          NODE_ENV: 'development'
+        }
+      }
+    </script>
     <script type="importmap">
       {
         "imports": {
-          "vue": "/esm/vue"
+          "vue": "/esm/vue.mjs"
         }
       }
+    </script>
+    <script type="module">
+      import * as Vue from 'vue'
+      window.Vue = Vue 
     </script>
     <script src="./js/stylus.min.js"></script>
   </head>   

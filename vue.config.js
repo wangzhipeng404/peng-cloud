@@ -5,6 +5,9 @@ module.exports = defineConfig({
   publicPath: './',
   transpileDependencies: true,
   configureWebpack: {
+    externals: {
+      vue: 'Vue',
+   },
     resolve: {
       fallback: {
         fs:false,

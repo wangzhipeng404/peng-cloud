@@ -1,17 +1,19 @@
 import { transformSync } from '@babel/core';
 import { parse, compileTemplate, compileScript, compileStyle, rewriteDefault } from '@vue/compiler-sfc';
 import jsx from '@vue/babel-plugin-jsx';
-import * as vue from 'vue';
+
+const renderName = '_sfc_render';
+const mainName = '_sfc_main';
 
 export function parser (source) {
   var id = Math.random ().toString (16).substring (3, 16);
   var dataVId = 'data-v-' + id;
   var parseResult = parse (source, { sourceMap: false });
   var descriptor = parseResult.descriptor;
-  var hasScoped = descriptor.styles.some (s => s.scoped);
+  var hasScoped = descriptor.styles.some(s => s.scoped);
   var template = null
   if (descriptor.template) {
-    template =compileTemplate ({
+    template = compileTemplate({
       id: id,
       source: descriptor.template.content,
       scoped: hasScoped,
@@ -20,7 +22,7 @@ export function parser (source) {
       },
     });
   }
-  var script = compileScript (descriptor, {
+  var script = compileScript(descriptor, {
     id: id,
     templateOptions: {
       scoped: hasScoped,
@@ -54,7 +56,7 @@ export function parser (source) {
       );
     }
   }
-  var styleCode = styleCodes.join ('\n');
+  let styleCode = styleCodes.join ('\n');
   // styleCode = styleCode.replace (
   //   /url\(\s*(?:(["'])((?:\\.|[^\n\\"'])+)\1|((?:\\.|[^\s,"'()\\])+))\s*\)/g,
   //   function (match, quotes, relUrl1, relUrl2) {
@@ -63,13 +65,11 @@ export function parser (source) {
   //     );
   //   }
   // );
-  var renderName = '_sfc_render';
-  var mainName = '_sfc_main';
   // 处理 template 标签
-  var templateCode = template ? template.code : ''
+  let templateCode = template ? template.code : ''
   // 处理 script 标签
-  let scriptCode = ''
-  scriptCode = rewriteDefault (script.content, mainName);
+  let scriptCode = script.content
+  scriptCode = rewriteDefault(script.content, mainName);
   const res = transformSync (
     scriptCode, 
     {
@@ -87,7 +87,6 @@ export function parser (source) {
   scriptCode = res.code
   // 导出组件对象
   var output = [
-    `const { ${Object.keys (vue).join (', ')} } = vue;`,
     scriptCode,
     templateCode,
     template ? mainName + '.render=' + renderName : ''
@@ -95,23 +94,36 @@ export function parser (source) {
   if (hasScoped) {
     output.push (mainName + '.__scopeId = ' + JSON.stringify (dataVId));
   }
-  output.push('return ' + mainName)
+  output.push(`export default ${mainName}`)
   var code = output.join ('\n');
-  code = code.replace(/\nexport (function|const) (render|ssrRender)/, '\n$1 _sfc_$2').replace(/import\s/g, 'const ')
-  .replace ('from "vue"', '= vue')
-  .replace (/\Was/gi, ':');
+  code = code.replace(/\nexport (function|const) (render|ssrRender)/, '\n$1 _sfc_$2')
   const result = {
     style: styleCode,
     script: code
   }
-  console.log('parser result', result)
   return result
 }
 
-export function createComponent(str) {
-  const fn = new Function ('vue', str);
-  const component = fn(vue);
-  return component
+export function createFile(jsCode, id) {
+  return new Promise((resolve) => {
+    const blob = new Blob([jsCode, `\nwindow['${id}'] = ${mainName}`], {type: 'text/javascript'});
+    const blobURL = URL.createObjectURL(blob);
+    const $script = document.createElement('script')
+    $script.type ='module'
+    $script.src = blobURL
+    $script.onload = () => {
+      resolve(window[id])
+    }
+    $script.error = () => {
+      resolve(null)
+    }
+    document.getElementsByTagName('head')[0].appendChild($script)
+  })
+}
+
+export async function createComponent(str, id = 'test-component') {
+  const res = await createFile(str, id)
+  return res
 }
 
 export function insertStyle(style) {
