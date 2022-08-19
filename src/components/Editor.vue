@@ -24,7 +24,7 @@
           frameborder="0"
           style="height: 70vh;width: 100%;"
           id="preview-iframe"
-          sandbox="allow-same-origin allow-forms allow-scripts allow-top-navigation-to-custom-protocols allow-top-navigation-by-user-activation allow-top-navigation"
+          sandbox="allow-same-origin allow-forms allow-scripts allow-top-navigation-to-custom-protocols allow-top-navigation-by-user-activation allow-top-navigation interest-cohort"
         />
       </div>
     </div>

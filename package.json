@@ -7,8 +7,8 @@
     "mobile": "vue-cli-service serve ./src/mobile.js",
     "esm": "rollup --config",
     "build": "vue-cli-service build",
-    "build:web": "vue-cli-service build --dest dist/web --modern",
-    "build:app": "vue-cli-service build ./src/mobile.js --dest dist/app --modern",
+    "build:web": "vue-cli-service build --dest dist/web",
+    "build:app": "vue-cli-service build ./src/mobile.js --dest dist/app",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
