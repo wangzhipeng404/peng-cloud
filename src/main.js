@@ -1,7 +1,9 @@
 import { createApp } from 'vue'
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
+import '@ant-design-vue/pro-layout/dist/style.css';
+import 'ant-design-vue/dist/antd.variable.min.css';
+import { ConfigProvider } from 'ant-design-vue';
+import ProLayout, { PageContainer } from '@ant-design-vue/pro-layout';
+import router from './router';
 import App from './App.vue'
-const app = createApp(App)
-app.use(ElementPlus)
-app.mount('#app')
+createApp(App).use(router).use(ConfigProvider).use(ProLayout).use(PageContainer).mount('#app');
+
