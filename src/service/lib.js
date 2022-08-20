@@ -25,6 +25,6 @@ export async function getLib (key) {
     return lib
 }
 
-export async function deletelib (key) {
+export async function deleteLib (key) {
     await db.libs.delete(key)
 }

@@ -1,5 +1,5 @@
 <template>
-  <x-shell :script="script" :styl="style" />
+  <x-shell :script="script" />
 </template>
 
 <script>
@@ -19,9 +19,7 @@ export default {
       const { data: { type, data, key } } = e
       if (type == 'editore2preview') {
         console.log(type, key)
-        console.log(data)
-        script.value = data.script
-        style.value = data.style
+        script.value = data
       }
     }
     onMounted(() => {

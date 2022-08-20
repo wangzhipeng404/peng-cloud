@@ -44,7 +44,12 @@ const filteredData = ref(dataSource.value)
 const onSearch = () => {
   filteredData.value = dataSource.value.filter(d => d.name.indexOf(filterState.name) > -1 && d.key.indexOf(filterState.key)  -1)
 }
-const onReset = () => filteredData.value = dataSource.value
+const onReset = () => {
+  filterState.name = ''
+  filterState.key = ''
+  filteredData.value = dataSource.value
+}
+
 const getData = async () => {
   const res = await findPages()
   dataSource.value = res.map(com => {

@@ -64,9 +64,9 @@
 
       const iframeRef = ref('')
       // const previewWindow = ref('')
-      const onPreview = () => {
+      const onPreview = async () => {
         try {
-        const res = parser(formState.code)
+        const res = await parser(formState.code)
         // previewWindow.value.postMessage({ type: 'editore2preview', data: res }, '*')
         iframeRef.value.contentWindow.postMessage({ type: 'editore2preview', data: res }, '*')
         } catch(e) {
@@ -113,18 +113,18 @@
         }
         let parseRes = {}
         try {
-          parseRes = parser(formState.code)
+          parseRes = await parser(formState.code)
         } catch (e) {
           console.error(e)
           message.error({ content:  '编译出错啦，请预览成功再保存', duration: 3 })
           return
         }
         const result = {
+          type: '2',
           name: formState.name,
           key: formState.key,
           code: formState.code,
-          script: parseRes.script,
-          style: parseRes.style
+          script: parseRes,
         }
         if (formState.id) {
           result.id = +formState.id

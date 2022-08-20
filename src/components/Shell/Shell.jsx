@@ -1,5 +1,5 @@
-import { onMounted, onUnmounted, defineComponent, ref, h, computed, watchEffect, defineAsyncComponent } from 'vue';
-import { createComponent, insertStyle } from '../../utils/parser'
+import { defineComponent, h, computed, defineAsyncComponent } from 'vue';
+import { createComponent } from '../../utils/parser'
 
 
 export default defineComponent({
@@ -7,18 +7,14 @@ export default defineComponent({
   props: {
     script: {
       type: String,
-    },
-    styl: {
-      type: String
     }
   },
   setup (props) {
-    const styleEl = ref('')
     const component = computed(() => {
       let comp = {}
       if (!props.script) {
         return { render () {
-          return h('div', '.....')
+          return h('van-loading')
         }}
       }
       try {
@@ -31,16 +27,6 @@ export default defineComponent({
         }
       }
       return comp
-    })
-    watchEffect(() => {
-      styleEl.value && styleEl.value.remove()
-      styleEl.value = insertStyle(props.styl)
-    })
-    onMounted(() => { 
-      styleEl.value = insertStyle(props.styl)
-    })
-    onUnmounted(() => {
-      styleEl.value && styleEl.value.remove()
     })
     return {
       component

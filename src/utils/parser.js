@@ -1,6 +1,7 @@
-import { transformSync } from '@babel/core';
-import { parse, compileTemplate, compileScript, compileStyle, rewriteDefault } from '@vue/compiler-sfc';
-import jsx from '@vue/babel-plugin-jsx';
+import { transformSync } from '@babel/core'
+import { parse, compileTemplate, compileScript, compileStyle, rewriteDefault } from '@vue/compiler-sfc'
+import jsx from '@vue/babel-plugin-jsx'
+import { minify } from 'terser'
 
 const renderName = '_sfc_render';
 const mainName = '_sfc_main';
@@ -86,27 +87,26 @@ export function parser (source) {
   )
   scriptCode = res.code
   // 导出组件对象
-  var output = [
+  let output = [
     scriptCode,
     templateCode,
-    template ? mainName + '.render=' + renderName : ''
+    template ? ';' + mainName + '.render=' + renderName : ''
   ];
+  if (styleCode) {
+    output.unshift(`insertStyle('${styleCode.replace(/\n/g, '')}')`)
+  }
   if (hasScoped) {
     output.push (mainName + '.__scopeId = ' + JSON.stringify (dataVId));
   }
   output.push(`export default ${mainName}`)
   var code = output.join ('\n');
   code = code.replace(/\nexport (function|const) (render|ssrRender)/, '\n$1 _sfc_$2')
-  const result = {
-    style: styleCode,
-    script: code
-  }
-  return result
+  return minify(code).then(res => res.code)
 }
 
 export function createFile(jsCode, id) {
   return new Promise((resolve) => {
-    const blob = new Blob([jsCode, `\nwindow['${id}'] = ${mainName}`], {type: 'text/javascript'});
+    const blob = new Blob([`${jsCode};window['${id}'] = ${mainName};`], {type: 'text/javascript'});
     const blobURL = URL.createObjectURL(blob);
     const $script = document.createElement('script')
     $script.type ='module'
