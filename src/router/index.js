@@ -42,7 +42,7 @@ export default createRouter({
         {
           name: 'pages',
           path: 'pages',
-          meta: { title: '页面管理', icon: 'icon-icon-test' },
+          meta: { title: '页面管理', icon: 'icon-icon-test', hideChildrenInMenu: true },
           redirect: '/pages/list',
           children: [
             {

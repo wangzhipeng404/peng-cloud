@@ -4,6 +4,15 @@ const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 module.exports = defineConfig({
   publicPath: './',
   transpileDependencies: true,
+  css: {
+    loaderOptions: {
+      less: {
+        lessOptions: {
+          javascriptEnabled: true
+        }
+      }
+    }
+  },
   configureWebpack: {
     externals: {
       vue: 'Vue',
