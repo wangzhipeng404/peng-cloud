@@ -1,23 +1,30 @@
-// import { initImportMap } from './utils/importmap';
-// await initImportMap()
-import { createApp, defineAsyncComponent } from 'vue'
-// import 'ant-design-vue/dist/antd.variable.min.css';
 import '@ant-design-vue/pro-layout/dist/style.less';
-import { ConfigProvider } from 'ant-design-vue';
-import vant from 'vant'
 import 'vant/lib/index.less'
-import ProLayout, { PageContainer } from '@ant-design-vue/pro-layout';
-import router from './router';
-import App from './App.vue'
-import { findComponents } from './service/compoment';
-import { createComponent } from './utils/parser';
+// import 'ant-design-vue/dist/antd.variable.min.css';
+async function init () {
+  const { initImportMap } = await import('./utils/importmap')
+  await initImportMap()
+  const { createApp, defineAsyncComponent } = await import('vue')
+  const { default: { ConfigProvider } } = await import('ant-design-vue');
+  const { default: vant } = await import('vant')
+  const {default: ProLayout} = await import('@ant-design-vue/pro-layout')
+  const { PageContainer } = await import('@ant-design-vue/pro-layout')
+  const {default: router} = await import('./router')
+  const {default: App} = await import('./App.vue')
+  const { findComponents } = await import('./service/compoment')
+  const { createComponent }  = await import('./utils/parser')
 
-const app = createApp(App)
-app.use(router).use(ConfigProvider).use(vant).use(ProLayout).use(PageContainer)
-findComponents().then(res => {
+  console.log(App)
+
+  const app = createApp(App)
+  app.use(router).use(ConfigProvider).use(vant).use(ProLayout).use(PageContainer)
+  const res = await findComponents()
   res.map(item => {
     app.component(item.key, defineAsyncComponent(() => createComponent(item.script, item.key)))
   })
   app.mount('#app');
-})
+}
+
+init()
+
 
