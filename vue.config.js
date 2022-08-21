@@ -14,6 +14,9 @@ module.exports = defineConfig({
     }
   },
   configureWebpack: {
+    // experiments: {
+    //   topLevelAwait: true,
+    // },
     externals: {
       vue: 'Vue',
     },
