@@ -2,9 +2,18 @@
         env: {
           NODE_ENV: 'development'
         }
+      }
+      function insertStyle(style) {
+        let styleEl = null
+        if (style) {
+          let styleEl = document.createElement('style')
+          styleEl.innerText = style.replace(/\n/g, '')
+          document.getElementsByTagName('head')[0].appendChild(styleEl)
+        }
+        return styleEl
       }</script><script type="importmap">{
         "imports": {
           "vue": "./esm/vue.mjs"
         }
       }</script><script type="module">import * as Vue from 'vue'
-      window.Vue = Vue</script><script src="./js/stylus.min.js"></script><script defer="defer" src="js/chunk-vendors.205ff418.js"></script><script defer="defer" src="js/app.34640281.js"></script><link href="css/chunk-vendors.95f62be7.css" rel="stylesheet"><link href="css/app.24af04d2.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but online-conplier doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>
+      window.Vue = Vue</script><script src="./js/stylus.min.js"></script><script defer="defer" src="js/chunk-vendors.5bb3ff70.js"></script><script defer="defer" src="js/app.7bb2428c.js"></script><link href="css/chunk-vendors.29ec9055.css" rel="stylesheet"><link href="css/app.b0b70145.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but online-conplier doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>

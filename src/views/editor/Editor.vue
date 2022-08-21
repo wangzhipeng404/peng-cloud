@@ -1,13 +1,14 @@
 <template>
   <PageContainer
     :content="content"
+    :extraContent="extractContent"
   >
     <div class="container">
       <div class="editor-wrap">
         <codemirror
           v-model="formState.code"
           placeholder="Code goes here..."
-          :style="{ height: '100vh' }"
+          :style="{ height: 'calc(100vh - 200px)' }"
           :autofocus="true"
           :indent-with-tab="true"
           :tab-size="2"
@@ -17,7 +18,7 @@
       <div class="preview-container">
         <div class="preview-wrap">
           <iframe
-            src="http://localhost:8081"
+            src="/#/preview"
             frameborder="0"
             style="height: 70vh;width: 100%;"
             id="preview-iframe"
@@ -26,13 +27,20 @@
         </div>
       </div>
     </div>
+    <Drawer
+      v-model:visible="visible"
+      title="属性定义"
+      placement="right"
+    >
+      <p>todo</p>
+    </Drawer>
   </PageContainer>
 </template>
 
 <script>
   import { onMounted, reactive, ref } from 'vue'
   import { useRoute } from 'vue-router'
-  import { Button, Form, Input, message } from 'ant-design-vue'
+  import { Button, Form, Input, message, Drawer } from 'ant-design-vue'
   import { PageContainer } from '@ant-design-vue/pro-layout'
   import { Codemirror } from 'vue-codemirror'
   import { javascript } from '@codemirror/lang-javascript'
@@ -46,6 +54,7 @@
     name: 'x-editor',
     components: {
       Codemirror,
+      Drawer
     },
     setup() {
       const route = useRoute()
@@ -63,6 +72,7 @@
       })
 
       const iframeRef = ref('')
+      const visible = ref(false)
       // const previewWindow = ref('')
       const onPreview = async () => {
         try {
@@ -149,11 +159,13 @@
               <Input v-model:value={formState.key} disabled={!!formState.id}/>
             </Form.Item>
             <Form.Item>
-              <Button type="primary" onClick={onSubmit}>保存</Button>
+              <Button type="primary" ghost onClick={() => visible.value = true}>属性定义</Button>
             </Form.Item>
           </Form>
         </>
       )
+
+      const extractContent = () => <Button type="primary" onClick={onSubmit}>保存</Button>
 
       onMounted(() => {
         if (route.params.id) {
@@ -174,7 +186,9 @@
         onPreview,
         Button,
         PageContainer,
-        content
+        content,
+        visible,
+        extractContent
       }
     }
   }

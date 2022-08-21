@@ -121,9 +121,22 @@ export function createFile(jsCode, id) {
   })
 }
 
+const registedMap = new Map()
 export async function createComponent(str, id = 'test-component') {
+  if (registedMap.has(id)) {
+    return registedMap.get(id)
+  }
   const res = await createFile(str, id)
+  if (id !== 'test-component') {
+    registedMap.set(id, res)
+  }
   return res
+}
+
+export function unregistComponet (key) {
+  if (registedMap.has(key)) {
+    registedMap.delete(key)
+  }
 }
 
 export function insertStyle(style) {

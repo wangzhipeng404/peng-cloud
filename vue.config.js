@@ -16,7 +16,7 @@ module.exports = defineConfig({
   configureWebpack: {
     externals: {
       vue: 'Vue',
-   },
+    },
     resolve: {
       fallback: {
         fs:false,

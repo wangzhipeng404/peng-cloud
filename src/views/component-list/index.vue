@@ -37,6 +37,7 @@ import { PageContainer } from '@ant-design-vue/pro-layout'
 import { Table, Form, Input, Button, Divider, Popconfirm, message } from 'ant-design-vue'
 import { findComponents, deleteComponet } from '../../service/compoment'
 import dayjs from 'dayjs'
+import { unregistComponet } from '@/utils/parser'
 
 const router = useRouter()
 const dataSource = ref([])
@@ -61,9 +62,10 @@ const getData = async () => {
     onSearch()
 }
 const onAdd = () => router.push({ name: 'editor' })
-const onDelete = async (id) => {
+const onDelete = async (id, key) => {
   await deleteComponet(id)
   getData()
+  unregistComponet(key)
   message.success({
     content: '删除成功',
     duration: 3
@@ -107,7 +109,7 @@ const columns = ref([
             title="确认删除此组件？"
             okText="确认"
             cancelText="取消"
-            onConfirm={() => onDelete(record.id)}
+            onConfirm={() => onDelete(record.id, record.key)}
           >
             <Button size="small" type="link" onClick={() => console.log(record)}>删除</Button>
           </Popconfirm>

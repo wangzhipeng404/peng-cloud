@@ -130,7 +130,7 @@ const updateConf = (val, type) => {
 <style>
 .ant-pro-setting-drawer-handle {
   position: absolute;
-  top: 240px;
+  bottom: 50px;
   right: 300px;
   z-index: 0;
   display: flex;

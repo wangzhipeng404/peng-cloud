@@ -61,7 +61,7 @@ const getData = async () => {
     })
     onSearch()
 }
-const onAdd = () => router.push({ name: 'editor' })
+const onAdd = () => router.push({ name: 'libEditor' })
 const onDelete = async (id) => {
   await deleteLib(id)
   getData()
@@ -102,7 +102,7 @@ const columns = ref([
     customRender: ({ record }) => {
       return (
         <>
-          <Button size="small" type="link" onClick={() => router.push({ name: 'editor', params: { id: record.id }})}>编辑</Button>
+          <Button size="small" type="link" onClick={() => router.push({ name: 'libEditor', params: { id: record.id }})}>编辑</Button>
           <Divider type="vertical" />
           <Popconfirm
             title="确认删除此组件？"

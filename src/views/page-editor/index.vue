@@ -15,19 +15,55 @@
         </List>
       </div>
       <div class="middle">
-        <van-row>
-          <draggable class="view-list" :list="list2" group="people" @change="log" item-key="id">
-            <template #item="{ element }">
-              <van-col span="24">
-                <component :is="element.type == 1 ? element.key : componentsMap.get(element.key)"
-                  v-bind="element.props" />
-              </van-col>
+          <draggable
+            class="dragArea view-list"
+            :list="list2"
+            group="people"
+            item-key="id"
+            @change="log"
+          >
+            <template #item="{element}">
+              <Nested
+                :item="element"
+                group="people"
+                item-key="id"
+                :components-map="componentsMap"
+              />
             </template>
           </draggable>
-        </van-row>
       </div>
       <div class="right">
+        <div class="top">
+          <Tabs centered>
+            <Tabs.TabPane key="1" tab="基本属性">
 
+            </Tabs.TabPane>
+            <Tabs.TabPane key="2" tab="布局属性">
+              
+            </Tabs.TabPane>
+          </Tabs>
+        </div>
+        <div class="bottom">
+          <div class="delete-wrap">
+            <div class="delete-content">
+              <DeleteOutlined fill="#ff4d4f" :style="{ opacity: 0.6 }" />
+              <div class="delete-hint">拖到此处删除</div>
+            </div>
+          </div>
+          <draggable 
+            :list="deleteList"
+            :sort="false"
+            group="people"
+            :put="false"
+            @change="log"
+            item-key="id"
+            class="delete-list"
+          >
+              <template #item>
+                <div />
+              </template>
+          </draggable>
+        </div>
       </div>
     </div>
   </PageContainer>
@@ -35,14 +71,25 @@
 
 <script setup>
 import { PageContainer } from '@ant-design-vue/pro-layout';
-import { onMounted, ref, reactive, toRaw } from 'vue';
-import { List, Form, message, Button, Input } from 'ant-design-vue';
+import { onMounted, ref, reactive, toRaw, provide } from 'vue';
+import { List, Form, message, Button, Input, Tabs } from 'ant-design-vue';
+import { DeleteOutlined } from '@ant-design/icons-vue';
 import draggable from 'vuedraggable'
 import { findComponents } from '../../service/compoment'
-import { createFile } from '@/utils/parser';
+import { createComponent } from '@/utils/parser';
 import { getPage, savePage } from '@/service/page';
 import { useRoute } from 'vue-router';
+import Nested from './Nested.vue'
 
+const currentItem = ref(null)
+const selectItem = item => {
+  console.log(item)
+  currentItem.value = item
+}
+provide('current', {
+  item: currentItem,
+  selectItem,
+})
 const route = useRoute()
 const fromRef = ref(null)
 const formState = reactive({
@@ -56,11 +103,35 @@ const formRule = reactive({
 })
 const componentsMap = new Map()
 
+const deleteList = [{ id: 1 }]
 const list1 = ref([
   {
+    id: -1,
+    name: 'Row',
+    key: 'van-row',
+    type: '1',
+    childNames: ['van-col'],
+    props: {
+      style: { flex: 1 }
+    }
+  },
+  {
+    id: -2,
+    name: 'Col',
+    key: 'van-col',
+    type: '1',
+    childNames: ['*'],
+    props: {
+      style: { display: 'flex', flex: 1 },
+      span: '24'
+    }
+  },
+  {
+    id: -3,
     name: '图片',
     key: 'van-image',
     type: '1',
+    childNames: [],
     props: {
       width: '100',
       height: '100',
@@ -73,10 +144,12 @@ const list2 = ref([])
 const log = (evt) => {
   console.log(evt)
 }
+
 const cloneDog = (component) => {
   return {
     ...component,
-    id: new Date().getTime().toString(32).substring(3,)
+    id: new Date().getTime().toString(32).substring(3,),
+    children: []
   };
 }
 
@@ -129,12 +202,19 @@ onMounted(() => {
 onMounted(async () => {
   const res = await findComponents()
   await Promise.all(res.map(item => {
-    return createFile(item.script, item.key).then(res => {
+    return createComponent(item.script, item.key).then(res => {
       console.log(res)
       componentsMap.set(item.key, res)
     })
   }))
-  list1.value = [...list1.value, ...res]
+  list1.value = [
+    ...list1.value, 
+    ...res.map(item => ({ 
+      ...item, 
+      props: {
+        style: { flex: 1 }
+      }
+    }))]
   if (route.params.id) {
     console.log(route.params.id)
     getPage(route.params.id).then(res => {
@@ -151,18 +231,20 @@ onMounted(async () => {
 <style lang="stylus" scoped>
 .container
   display flex
+  height calc(100vh - 200px)
   .left, .right
     width 300px
     border 1px soild #eee
-    height 500px
+    height 100%
     overflow auto
     background #fff
   .middle
     flex 1
     margin 0 16px
-    border 1px soild #eee
-    height 500px
-    overflow auto
+    height 100%
+    max-width 600px
+    overflow-x hidden
+    overflow-y auto
     background #fff
   .components-list
     width 100%
@@ -171,11 +253,47 @@ onMounted(async () => {
     .list-item
       padding 4px 16px
       border-bottom 1px solid #eee
+  .right
+    display flex
+    flex-direction column
+    .top
+      flex 1
+    .bottom
+      position relative
+      height 80px
+      width 100%
+      display flex
+      overflow hidden
+      .delete-list
+        flex 1
+        z-index 9
+      .delete-wrap
+        position absolute
+        top 0
+        left 0
+        width 100%
+        height 100%
+        border 1px dashed #ff4d4f
+        flex 1
+        font-size 16px
+        color #ff4d4f
+        background #fff1f0
+        overflow hidden
+        .delete-content
+          height 100%
+          display flex
+          flex-direction column
+          justify-content center
+          text-align center
+          .delete-hint
+            margin-top 4px
+            font-size 10px
   .view-list
+    box-sizing border-box
+    min-width 300px
     width 100%
     height 500px
+    padding-bottom 20px
     overflow auto
-    .view-item
-      padding 8px
-      border-bottom 1px solid #eee
+    flex-wrap wrap
 </style>

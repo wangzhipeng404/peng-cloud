@@ -60,12 +60,32 @@ export default createRouter({
           ]
         },
         {
-          name: 'lib-list',
-          path: 'libs',
-          meta: { title: '库管理', icon: 'icon-icon-test' },
-          component: () => import(/* webpackChunkName: 'lib-list' */ '../views/lib-list/index.vue'),
-        },
+          name: 'libs',
+          path: '/libs',
+          meta: { title: '库管理', icon: 'icon-icon-test', hideChildrenInMenu: true },
+          redirect: '/libs/list',
+          children: [
+            {
+              name: 'lib-list',
+              path: 'list',
+              meta: { title: '列表', icon: 'icon-icon-test' },
+              component: () => import(/* webpackChunkName: 'lib-list' */ '../views/lib-list/index.vue'),
+            },
+            {
+              path: '/lib/editor/:id?',
+              name: 'libEditor',
+              meta: { hideInMenu: true, title: '编辑', icon: 'icon-icon-test',  },
+              component: () => import(/* webpackChunkName: 'page-editor' */ '../views/lib-editor/index.vue'),
+            }
+          ]
+        }
       ],
-    }
+    },
+    {
+      name: 'preview',
+      path: '/preview',
+      meta: { title: '预览', icon: 'icon-icon-test', hideInMenu: true },
+      component: () => import(/* webpackChunkName: 'lib-list' */ '../views/preview/Preview.vue'),
+    },
   ],
 });
