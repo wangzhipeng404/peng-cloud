@@ -28,3 +28,8 @@ export async function getPage (key) {
 export async function deletePage (key) {
     await db.pages.delete(key)
 }
+
+export async function countPage() {
+    const count = await db.pages.count()
+    return count
+}

@@ -28,3 +28,8 @@ export async function getLib (key) {
 export async function deleteLib (key) {
     await db.libs.delete(key)
 }
+
+export async function countLib() {
+    const count = await db.libs.count()
+    return count
+}

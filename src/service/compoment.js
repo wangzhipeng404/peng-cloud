@@ -28,3 +28,8 @@ export async function getComponet (key) {
 export async function deleteComponet (key) {
     await db.components.delete(key)
 }
+
+export async function countComponent() {
+    const count = await db.components.count()
+    return count
+}
