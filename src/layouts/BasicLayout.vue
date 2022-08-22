@@ -13,8 +13,8 @@
   >
     <template #menuHeaderRender>
       <router-link :to="{ path: '/' }">
-        <img src="https://alicdn.antdv.com/v2/assets/logo.1ef800a8.svg" />
-        <h1>Peng Editor</h1>
+        <img src="~@/assets/logo.svg" />
+        <h1>Peng Cloud</h1>
       </router-link>
     </template>
     <template #rightContentRender>

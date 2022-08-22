@@ -1,0 +1,32 @@
+<svg width="160" height="102.25" xmlns="http://www.w3.org/2000/svg" class="style-removed" style="background: transpant;" version="1.1" preserveAspectRatio="none" ref="svg_canvas">
+
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="104.25" width="162" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <g display="inline" cursor="move" transform="translate(220,248.03216552734375) scale(1) " key="shape_AjwXCJgVSQ" ref="shape_AjwXCJgVSQ" id="shape_AjwXCJgVSQ">
+   <g id="svg_4" display="inline">
+    <rect id="svg_5" y="-257" x="-229" height="119.93566" width="180" fill="rgba(0,0,0,0)"/>
+    <svg data-parent="shape_AjwXCJgVSQ" class="style-removed" preserveAspectRatio="none" xml:space="preserve" enable-background="new 0 0 200 200" viewBox="10.189589500427246 43.904483795166016 179.6204071044922 112.19052124023438" height="99.93566" width="160" y="-247" x="-219" id="svg_1" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+     <g id="svg_6">
+      <path id="svg_7" stroke-width="0" d="m106.321,89.494c0,0 21.712,-23.689 49.111,-19.623c20.564,3.052 29.926,14.137 34.378,20.14l-13.44,0c0,0 -9.943,-9.084 -23.78,-10.899c-12.577,-1.65 -22.747,-0.991 -46.269,10.382z" fill="rgb(116, 36, 221)"/>
+      <path id="svg_8" stroke-width="0" d="m147.161,71.716c0,0 -5.801,-22.574 -33.028,-27.054s-52.213,11.258 -70.823,38.025l22.517,-4.021c0,0 19.354,-29.195 47.101,-24.24c16.083,2.872 24.699,10.109 27.916,18.496l6.317,-1.206z" fill="rgb(116, 36, 221)"/>
+      <path id="svg_9" stroke-width="0" d="m62.38,83.893c0,0 -46.698,7.782 -51.696,38.255c-4.136,25.216 18.611,33.947 33.43,33.947c18.036,0 112.698,0 112.698,0l1.206,-5.687c0,0 -71.397,0.324 -101.38,0c-15.968,-0.172 -28.147,-4.996 -28.147,-22.574c0,-14.992 12.867,-26.502 29.065,-32.034l4.824,-11.907z" fill="rgb(36, 160, 221)"/>
+     </g>
+    </svg>
+   </g>
+  </g>
+  <g display="inline" cursor="move" transform="translate(202.52809143066406,111.23491668701172) scale(1) " key="shape_W7YDZ35Q8m" ref="shape_W7YDZ35Q8m" class="brand_name" id="shape_W7YDZ35Q8m">
+   <g id="svg_3" display="inline">
+    <svg y="-248" x="-215" id="svg_10" data-parent="shape_W7YDZ35Q8m" preserveAspectRatio="none" viewBox="0 0 272 407.644" height="407.644" width="272" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+     <rect id="svg_11" y="174.822" x="58" height="58" width="40" fill="rgba(0,0,0,0)"/>
+     <g id="svg_12" data-width="39.73">
+      <path id="svg_13" data-glyph-descender="-8.178" data-glyph-ascender="49.822" data-glyph-h="58" data-glyph-w="39.73" stroke-width="0.097" stroke="rgb(116, 36, 221)" fill="rgb(116, 36, 221)" d="m83.4,210.31201l-13.22,0l0,13.51l-8.24,0l0,-38.69l19.32,0q5.28,0 7.54,0.76l0,0q3.83,1.27 6.03,5.28l0,0q1.62,3.01 1.62,6.55l0,0q0,2.96 -1.07,5.6q-1.07,2.64 -2.99,4.32l0,0q-1.74,1.51 -3.68,2.09q-1.94,0.58 -5.31,0.58l0,0zm-13.22,-18.27l0,11.36l11.19,0q3.02,0 4.24,-0.92l0,0q1.8,-1.45 1.8,-5.05l0,0q0,-3.89 -2.73,-4.99l0,0q-0.99,-0.4 -3.13,-0.4l0,0l-11.37,0z"/>
+     </g>
+    </svg>
+   </g>
+  </g>
+ </g>
+</svg>
