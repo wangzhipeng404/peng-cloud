@@ -30,15 +30,13 @@ export function initImportMap() {
       mapEl.setAttribute('type', 'importmap');
       mapEl.textContent = JSON.stringify({ imports, scopes: {} });
       document.getElementsByTagName('head')[0].prepend(mapEl)
+      window.moduleLoaded = () => {
+        resovle()
+      }
       const $script = document.createElement('script')
       $script.type = 'module'
-      $script.textContent = `import * as vue from 'vue';window.Vue=vue;`
+      $script.textContent = `import * as vue from 'vue';window.Vue=vue;window.moduleLoaded();window.moduleLoaded=null;`
       mapEl.after($script)
-      setInterval(() => {
-        if (window.Vue) {
-          resovle()
-        }
-      }, 100)
     })
   })
 
