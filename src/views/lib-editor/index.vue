@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <PageContainer :content="content" :extraContent="extractContent">
+  <PageContainer :content="content">
     <div class="container">
       <div class="editor-wrap">
         <codemirror v-model="formState.code" placeholder="Code goes here..." :style="{ height: 'calc(100vh - 200px)' }"
@@ -107,11 +107,12 @@ const content = () => (
           </Button>
         </Upload>
       </Form.Item>
+      <Form.Item>
+        <Button type="primary" onClick={onSubmit}>保存</Button>
+      </Form.Item>
     </Form>
   </>
 )
-
-const extractContent = () => <Button type="primary" onClick={onSubmit}>保存</Button>
 
 onMounted(() => {
   if (route.params.id) {

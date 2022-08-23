@@ -1,7 +1,6 @@
 <template>
   <PageContainer
     :content="content"
-    :extraContent="extractContent"
   >
     <div class="container">
       <div class="editor-wrap">
@@ -161,11 +160,12 @@
             <Form.Item>
               <Button type="primary" ghost onClick={() => visible.value = true}>属性定义</Button>
             </Form.Item>
+            <Form.Item>
+              <Button type="primary" onClick={onSubmit}>保存</Button>
+            </Form.Item>
           </Form>
         </>
       )
-
-      const extractContent = () => <Button type="primary" onClick={onSubmit}>保存</Button>
 
       onMounted(() => {
         if (route.params.id) {
@@ -188,7 +188,6 @@
         PageContainer,
         content,
         visible,
-        extractContent,
         iframeSrc,
       }
     }

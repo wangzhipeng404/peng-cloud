@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "mobile": "vue-cli-service serve ./src/mobile.js",
+    "serve": "vue-cli-service serve --mode web",
+    "mobile": "vue-cli-service serve --mode mobile",
     "esm": "rollup --config",
     "build": "vue-cli-service build",
-    "build:web": "vue-cli-service build --dest dist/web",
-    "build:app": "vue-cli-service build ./src/mobile.js --dest dist/app",
+    "build:web": "vue-cli-service build --dest dist/web --mode web",
+    "build:app": "vue-cli-service build --dest dist/app --mode mobile",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

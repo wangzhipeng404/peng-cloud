@@ -71,21 +71,6 @@ export function parser (source) {
   // 处理 script 标签
   let scriptCode = script.content
   scriptCode = rewriteDefault(script.content, mainName);
-  const res = transformSync (
-    scriptCode, 
-    {
-      babelrc: false,
-      ast: false,
-      // presets: ['es2015'],
-      plugins: [[jsx, {
-        mergeProps: true,
-        optimize: false,
-        transformOn: false,
-        enableObjectSlots: true,
-      }]],
-    }
-  )
-  scriptCode = res.code
   // 导出组件对象
   let output = [
     scriptCode,
@@ -101,6 +86,21 @@ export function parser (source) {
   output.push(`export default ${mainName}`)
   var code = output.join ('\n');
   code = code.replace(/\nexport (function|const) (render|ssrRender)/, '\n$1 _sfc_$2')
+  const res = transformSync (
+    code, 
+    {
+      babelrc: false,
+      ast: false,
+      // presets: ['es2015'],
+      plugins: [[jsx, {
+        mergeProps: true,
+        optimize: false,
+        transformOn: false,
+        enableObjectSlots: true,
+      }]],
+    }
+  )
+  code = res.code
   return minify(code).then(res => res.code)
 }
 

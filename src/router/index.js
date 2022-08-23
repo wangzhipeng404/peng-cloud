@@ -35,7 +35,7 @@ export default createRouter({
               path: '/compoents/editor/:id?',
               name: 'editor',
               meta: { hideInMenu: true, title: '编辑', icon: 'icon-icon-test',  },
-              component: () => import(/* webpackChunkName: 'component-editor' */ '../views/editor/Editor.vue'),
+              component: () => import(/* webpackChunkName: 'component-editor' */ '../views/component-editor/index.vue'),
             }
           ]
         },
