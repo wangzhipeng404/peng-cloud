@@ -163,9 +163,9 @@ const onSubmit = async () => {
     type: '2',
     name: formState.name,
     key: formState.key,
-    protocl: {
+    protocl: JSON.stringify({
       views: toRaw(list2.value)
-    }
+    })
   }
   if (formState.id) {
     result.id = +formState.id
@@ -221,7 +221,7 @@ onMounted(async () => {
       if (res) {
         formState.name = res.name
         formState.key = res.key
-        list2.value = res.protocl.views
+        list2.value = JSON.parse(res.protocl).views
       }
     })
   }
