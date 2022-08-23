@@ -13,6 +13,7 @@ export const defaultLibs = [
 ]
 
 export function initImportMap() {
+  console.log('initImportMap')
   return new Promise((resovle) => {
     findLibs().then(list => {
       const newList = [...defaultLibs, ...list]

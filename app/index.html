@@ -1,6 +1,17 @@
-<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="favicon.ico"><title>Peng Editor</title><script>var process = {
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="favicon.ico">
+  <title>Peng Cloud</title>
+  <script>
+    var process = {
       env: {
-        NODE_ENV: 'development'
+        NODE_ENV: 'development',
+        TARGET: 'mobile'
       }
     }
     function insertStyle(style) {
@@ -11,7 +22,19 @@
         document.getElementsByTagName('head')[0].appendChild(styleEl)
       }
       return styleEl
-    }</script><script src="./js/stylus.min.js"></script><script defer="defer" src="js/chunk-vendors.58d3c5a2.js"></script><script defer="defer" src="js/app.7112bd92.js"></script><link href="css/chunk-vendors.0468bd4c.css" rel="stylesheet"><link href="css/app.567ce11a.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but online-conplier doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"><style>html,
+    }
+  </script>
+  <script src="./js/stylus.min.js"></script>
+<script defer src="js/app.js"></script></head>
+
+<body>
+  <noscript>
+    <strong>We're sorry but online-conplier doesn't work properly without JavaScript enabled.
+        Please enable it to continue.</strong>
+  </noscript>
+  <div id="app">
+    <style>
+      html,
       body,
       #root {
         height: 100%;
@@ -179,9 +202,30 @@
           -webkit-transform: rotate(405deg);
           transform: rotate(405deg);
         }
-      }</style><div style="display: flex;
+      }
+    </style>
+    <div style="
+        display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         height: 70vh;
-        min-height: 420px;"><img src="./logo.svg" alt="logo" width="128"/><div class="page-loading-warp"><div class="ant-spin ant-spin-lg ant-spin-spinning"><span class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span></div></div><div style="display: flex; align-items: center; justify-content: center"><img src="./logo.svg" width="32" style="margin-right: 8px"/> Peng Cloud</div></div></div></body></html>
+        min-height: 420px;
+      ">
+      <img src="./logo.svg" alt="logo" width="128" />
+      <div class="page-loading-warp">
+        <div class="ant-spin ant-spin-lg ant-spin-spinning">
+          <span class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i
+              class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: center">
+        <img src="./logo.svg" width="32"
+          style="margin-right: 8px" />
+        Peng Cloud
+      </div>
+    </div>
+    <!-- built files will be auto injected -->
+</body>
+
+</html>
