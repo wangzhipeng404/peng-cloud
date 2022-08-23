@@ -18,7 +18,7 @@
       <div class="preview-container">
         <div class="preview-wrap">
           <iframe
-            src="/#/preview"
+            :src="iframeSrc"
             frameborder="0"
             style="height: 70vh;width: 100%;"
             id="preview-iframe"
@@ -70,7 +70,7 @@
         key: [{ required: true, message: '请输入组件key' }],
         code: [{ required: true, message: '请输入代码' }],
       })
-
+      const iframeSrc = ref(`${location.origin}${location.pathname}#/preview`)
       const iframeRef = ref('')
       const visible = ref(false)
       // const previewWindow = ref('')
@@ -188,7 +188,8 @@
         PageContainer,
         content,
         visible,
-        extractContent
+        extractContent,
+        iframeSrc,
       }
     }
   }
