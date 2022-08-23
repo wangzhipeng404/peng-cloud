@@ -31,7 +31,10 @@ onMounted(async () => {
   try {
     const res = await getPage(pageId)
     if (res) {
-      pageInfo.value = res
+      pageInfo.value = {
+        ...res,
+        protocl: JSON.parse(res.protocl)
+      }
     } else {
       notFound()
     }
