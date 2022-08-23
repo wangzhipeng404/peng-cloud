@@ -159,21 +159,26 @@ const onSubmit = async () => {
     message.error({ content: '请拖动组件到页面内', duration: 3 })
     return
   }
+  console.log('reust之前')
   const result = {
     type: '2',
     name: formState.name,
     key: formState.key,
-    protocl: {
+    protocl: JSON.stringify({
       views: toRaw(list2.value)
-    }
+    })
   }
+  console.log(result)
   if (formState.id) {
     result.id = +formState.id
   }
   try {
+    console.log('开始保存')
+    console.log(result)
     const id = await savePage(result)
     formState.id = id
   } catch (e) {
+    console.log('出错了')
     console.error(e)
     message.error({ content: e })
     return
@@ -221,7 +226,7 @@ onMounted(async () => {
       if (res) {
         formState.name = res.name
         formState.key = res.key
-        list2.value = res.protocl.views
+        list2.value = JSON.parse(res.protocl).views
       }
     })
   }
