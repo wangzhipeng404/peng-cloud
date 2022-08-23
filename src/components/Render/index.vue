@@ -12,12 +12,15 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
-defineProps({
+import { defineProps, watchEffect } from 'vue';
+const props = defineProps({
   views: {
     type: Array,
     default: () => []
   }
+})
+watchEffect(() => {
+  console.log(props.vues)
 })
 </script>
 <script>
