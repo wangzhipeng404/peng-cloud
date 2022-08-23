@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --mode web",
-    "mobile": "vue-cli-service serve --mode mobile",
+    "mobile": "vue-cli-service serve ./src/mobile.js --mode mobile",
     "esm": "rollup --config",
     "build": "vue-cli-service build",
     "build:web": "vue-cli-service build --dest dist/web --mode web",
-    "build:app": "vue-cli-service build --dest dist/app --mode mobile",
+    "build:app": "vue-cli-service build ./src/mobile.js --dest dist/app --mode mobile",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
