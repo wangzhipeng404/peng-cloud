@@ -4,7 +4,9 @@ const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 module.exports = defineConfig({
   publicPath: './',
   transpileDependencies: true,
+  productionSourceMap: false,
   css: {
+    sourceMap: false,
     loaderOptions: {
       less: {
         lessOptions: {
