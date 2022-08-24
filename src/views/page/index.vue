@@ -6,12 +6,12 @@
 import { useRoute } from 'vue-router'
 import Render from '@/components/Render'
 import { getPage } from '@/service/page'
-import { onMounted, toRefs } from 'vue';
+import { onMounted, ref } from 'vue';
 import { Dialog } from 'vant';
 
 const route = useRoute()
 const pageId = route.params.id
-let pageInfo = toRefs({
+let pageInfo = ref({
   protocl: {
     views: []
   }
@@ -31,9 +31,10 @@ onMounted(async () => {
   try {
     const res = await getPage(pageId)
     if (res) {
-      res.protocl = JSON.parse(res.protocl)
-      pageInfo = toRefs(res)
-      console.log(pageInfo)
+      pageInfo.value = {
+        ...res,
+        protocl: JSON.parse(res.protocl)
+      }
     } else {
       notFound()
     }
