@@ -76,7 +76,7 @@ import { List, Form, message, Button, Input, Tabs } from 'ant-design-vue';
 import { DeleteOutlined } from '@ant-design/icons-vue';
 import draggable from 'vuedraggable'
 import { findComponents } from '../../service/compoment'
-import { createComponent } from '@/utils/parser';
+import { createComponent } from '@/utils/component';
 import { getPage, savePage } from '@/service/page';
 import { useRoute } from 'vue-router';
 import Nested from './Nested.vue'

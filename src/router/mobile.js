@@ -8,11 +8,11 @@ export default createRouter({
       path: '/',
       name: 'index',
       meta: { title: '首页' },
-      redirect: '/page/1',
+      redirect: '/page',
     },
     {
       name: 'page',
-      path: '/page/:id',
+      path: '/page/:id?',
       meta: { title: '页面', icon: 'icon-icon-test' },
       component: () => import('../views/page/index.vue'),
     },

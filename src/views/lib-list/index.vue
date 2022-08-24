@@ -15,10 +15,10 @@
         <Form.Item>
           <Button @click="onReset">重置</Button>
         </Form.Item>
+        <Form.Item>
+          <Button type="primary" @click="onAdd" ghost>新增</Button>
+        </Form.Item>
       </Form>
-    </div>
-    <div class="operation-wrap">
-      <Button type="primary" @click="onAdd">新增</Button>
     </div>
     <div class="table-wrap">
       <Table
@@ -124,6 +124,6 @@ onMounted(() => {
 </script>
 
 <style lang="stylus">
-.operation-wrap
-  padding 16px 0
+.filter-wrap
+  padding-bottom 16px
 </style>

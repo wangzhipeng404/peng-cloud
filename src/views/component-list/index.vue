@@ -15,10 +15,10 @@
         <Form.Item>
           <Button @click="onReset">重置</Button>
         </Form.Item>
+        <Form.Item>
+          <Button type="primary" @click="onAdd" ghost>新增</Button>
+        </Form.Item>
       </Form>
-    </div>
-    <div class="operation-wrap">
-      <Button type="primary" @click="onAdd">新增</Button>
     </div>
     <div class="table-wrap">
       <Table
@@ -37,7 +37,7 @@ import { PageContainer } from '@ant-design-vue/pro-layout'
 import { Table, Form, Input, Button, Divider, Popconfirm, message } from 'ant-design-vue'
 import { findComponents, deleteComponet } from '../../service/compoment'
 import dayjs from 'dayjs'
-import { unregistComponet } from '@/utils/parser'
+import { unregistComponet } from '@/utils/component'
 
 const router = useRouter()
 const dataSource = ref([])
@@ -125,6 +125,6 @@ onMounted(() => {
 </script>
 
 <style lang="stylus">
-.operation-wrap
-  padding 16px 0
+.filter-wrap
+  padding-bottom 16px
 </style>
