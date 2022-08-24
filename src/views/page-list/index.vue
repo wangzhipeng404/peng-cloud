@@ -15,10 +15,10 @@
         <Form.Item>
           <Button @click="onReset">重置</Button>
         </Form.Item>
+        <Form.Item>
+          <Button type="primary" @click="onAdd" ghost>新增</Button>
+        </Form.Item>
       </Form>
-    </div>
-    <div class="operation-wrap">
-      <Button type="primary" @click="onAdd">新增</Button>
     </div>
     <div class="table-wrap">
       <Table
@@ -36,11 +36,18 @@ import { useRouter } from 'vue-router'
 import { PageContainer } from '@ant-design-vue/pro-layout'
 import { Table, Form, Input, Button, Divider, Popconfirm, message } from 'ant-design-vue'
 import { findPages, deletePage } from '../../service/page'
+import { saveSetting, getSetting } from '@/service/setting'
 import dayjs from 'dayjs'
+import { HomeTwoTone } from '@ant-design/icons-vue'
 
 const router = useRouter()
 const dataSource = ref([])
 const filteredData = ref(dataSource.value)
+const indexSetting = ref({
+  key: 'index',
+  value: '',
+})
+
 const onSearch = () => {
   filteredData.value = dataSource.value.filter(d => d.name.indexOf(filterState.name) > -1 && d.key.indexOf(filterState.key)  -1)
 }
@@ -70,12 +77,31 @@ const onDelete = async (id) => {
     duration: 3
   })
 }
+
+const onIndex = async (pageid) => {
+  try {
+    indexSetting.value.value = pageid
+    const id = await saveSetting({ ...indexSetting.value })
+    indexSetting.value.id = id
+  } catch (e) {
+    console.error(e)
+    message.error({ content: e , duration: 3 })
+    return
+  }
+  message.success({ content: '保存成功', duration: 3 })
+}
 const filterState = reactive({
   name: '',
   key: ''
 })
 
 const columns = ref([
+  {
+    title: '',
+    key: 'icon',
+    width: 20,
+    customRender: ({record }) => record.id == indexSetting.value.value && <HomeTwoTone />
+  },
   {
     title: '名称',
     dataIndex: 'name',
@@ -105,6 +131,15 @@ const columns = ref([
           <Button size="small" type="link" onClick={() => router.push({ name: 'pageEditor', params: { id: record.id }})}>编辑</Button>
           <Divider type="vertical" />
           <Popconfirm
+            title="确认设定此页设为首页"
+            okText="确认"
+            cancelText="取消"
+            onConfirm={() => onIndex(record.id)}
+          >
+            <Button size="small" type="link" onClick={() => console.log(record)}>设为首页</Button>
+          </Popconfirm>
+          <Divider type="vertical" />
+          <Popconfirm
             title="确认删除此组件？"
             okText="确认"
             cancelText="取消"
@@ -120,10 +155,18 @@ const columns = ref([
 
 onMounted(() => {
   getData()
+  getSetting('index').then(res => {
+    if (res) {
+      indexSetting.value = { ...res }
+      console.log(indexSetting.value)
+    }
+  }).catch(e => {
+    console.log(e)
+  })
 })
 </script>
 
 <style lang="stylus">
-.operation-wrap
-  padding 16px 0
+.filter-wrap
+  padding-bottom 16px
 </style>

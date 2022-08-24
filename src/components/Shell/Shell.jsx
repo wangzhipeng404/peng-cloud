@@ -1,5 +1,5 @@
 import { defineComponent, h, computed, defineAsyncComponent } from 'vue';
-import { createComponent } from '../../utils/parser'
+import { createComponent } from '../../utils/component'
 
 
 export default defineComponent({

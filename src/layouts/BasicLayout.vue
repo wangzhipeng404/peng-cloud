@@ -7,6 +7,7 @@
     :menu-data="menuData"
     :breadcrumb="{ routes: breadcrumb }"
     disable-content-margin
+    disable-content-padding
     style="min-height: 100vh"
     iconfont-url="//at.alicdn.com/t/font_2804900_2sp8hxw3ln8.js"
     v-bind="proConfig"

@@ -15,15 +15,33 @@
         />
       </div>
       <div class="preview-container">
-        <div class="preview-wrap">
-          <iframe
-            :src="iframeSrc"
-            frameborder="0"
-            style="height: 70vh;width: 100%;"
-            id="preview-iframe"
-            sandbox="allow-same-origin allow-forms allow-scripts allow-top-navigation-to-custom-protocols allow-top-navigation-by-user-activation allow-top-navigation"
-          />
-        </div>
+        <Tabs centered>
+          <TabPane key="1" tab="预览">
+            <div class="preview-wrap">
+              <iframe
+                :src="iframeSrc"
+                frameborder="0"
+                style="height: 100%;width: 100%;"
+                id="preview-iframe"
+                sandbox="allow-same-origin allow-forms allow-scripts allow-top-navigation-to-custom-protocols allow-top-navigation-by-user-activation allow-top-navigation"
+              />
+            </div>
+          </TabPane>
+          <TabPane key="2" tab="编译结果">
+            <div class="preview-wrap">
+              <codemirror
+                v-model="parsedCode"
+                placeholder="Code goes here..."
+                :style="{ height: '100%' }"
+                :autofocus="true"
+                :indent-with-tab="true"
+                :tab-size="2"
+                :extensions="extensions"
+                disabled
+              />
+            </div>
+          </TabPane>
+        </Tabs>
       </div>
     </div>
     <Drawer
@@ -39,7 +57,7 @@
 <script>
   import { onMounted, reactive, ref } from 'vue'
   import { useRoute } from 'vue-router'
-  import { Button, Form, Input, message, Drawer } from 'ant-design-vue'
+  import { Button, Form, Input, message, Drawer, Tabs } from 'ant-design-vue'
   import { PageContainer } from '@ant-design-vue/pro-layout'
   import { Codemirror } from 'vue-codemirror'
   import { javascript } from '@codemirror/lang-javascript'
@@ -52,9 +70,12 @@
   export default {
     name: 'x-editor',
     components: {
-      Codemirror,
-      Drawer
-    },
+    Codemirror,
+    Drawer,
+    Tabs,
+    TabPane: Tabs.TabPane,
+    PageContainer
+},
     setup() {
       const route = useRoute()
       const fromRef = ref(null)
@@ -72,12 +93,14 @@
       const iframeSrc = ref(`${location.origin}${location.pathname}#/preview`)
       const iframeRef = ref('')
       const visible = ref(false)
+      const parsedCode = ref('')
       // const previewWindow = ref('')
       const onPreview = async () => {
         try {
-        const res = await parser(formState.code)
+        const { minify, raw } = await parser(formState.code)
+        parsedCode.value = raw
         // previewWindow.value.postMessage({ type: 'editore2preview', data: res }, '*')
-        iframeRef.value.contentWindow.postMessage({ type: 'editore2preview', data: res }, '*')
+        iframeRef.value.contentWindow.postMessage({ type: 'editore2preview', data: minify }, '*')
         } catch(e) {
           console.log(e)
         }
@@ -120,9 +143,10 @@
           message.error({ content: '请输入组件代码', duration: 3 })
           return
         }
-        let parseRes = {}
+        let parseRes = ''
         try {
-          parseRes = await parser(formState.code)
+          const { minify } = await parser(formState.code)
+          parseRes = minify
         } catch (e) {
           console.error(e)
           message.error({ content:  '编译出错啦，请预览成功再保存', duration: 3 })
@@ -184,11 +208,10 @@
         extensions,
         iframeRef,
         onPreview,
-        Button,
-        PageContainer,
         content,
         visible,
         iframeSrc,
+        parsedCode
       }
     }
   }
@@ -203,13 +226,15 @@
     flex 1
   .preview-container
     flex-shrink 0
-    padding 16px
+    padding 0 16px
     width 407px
     background-color #fff
     .preview-wrap
       border-radius 10px
-      height: 70vh
+      height: 60vh
       border: 1px solid #eee
+      .cm-content
+        word-break break-word
     #preview-iframe
       border-radius: 10px
     #preview-iframe::-webkit-scrollbar
