@@ -3,45 +3,17 @@
   <PageContainer :content="content">
     <div class="container">
       <div class="left">
-        <List class="components-list">
-          <draggable :list="list1" :sort="false" :group="{ name: 'people', pull: 'clone', put: false }"
-            :clone="cloneDog" @change="log" item-key="id">
-            <template #item="{ element }">
-              <List.Item class="list-item">
-                <List.Item.Meta :title="element.name" :description="element.key"></List.Item.Meta>
-              </List.Item>
-            </template>
-          </draggable>
-        </List>
-      </div>
-      <div class="middle">
-          <draggable
-            class="dragArea view-list"
-            :list="list2"
-            group="people"
-            item-key="id"
-            @change="log"
-          >
-            <template #item="{element}">
-              <Nested
-                :item="element"
-                group="people"
-                item-key="id"
-                :components-map="componentsMap"
-              />
-            </template>
-          </draggable>
-      </div>
-      <div class="right">
         <div class="top">
-          <Tabs centered>
-            <Tabs.TabPane key="1" tab="基本属性">
-
-            </Tabs.TabPane>
-            <Tabs.TabPane key="2" tab="布局属性">
-              
-            </Tabs.TabPane>
-          </Tabs>
+          <List class="components-list">
+            <draggable :list="list1" :sort="false" :group="{ name: 'people', pull: 'clone', put: false }"
+              :clone="cloneComponent" @change="log" item-key="id">
+              <template #item="{ element }">
+                <List.Item class="list-item">
+                  <List.Item.Meta :title="element.name" :description="element.key"></List.Item.Meta>
+                </List.Item>
+              </template>
+            </draggable>
+          </List>
         </div>
         <div class="bottom">
           <div class="delete-wrap">
@@ -65,21 +37,65 @@
           </draggable>
         </div>
       </div>
+      <div class="middle">
+          <draggable
+            class="dragArea view-list"
+            :list="list2"
+            group="people"
+            item-key="id"
+            @change="log"
+          >
+            <template #item="{element}">
+              <Nested
+                :item="element"
+                group="people"
+                item-key="id"
+                :components-map="componentsMap"
+              />
+            </template>
+          </draggable>
+      </div>
+      <div class="right">
+        <Tabs centered>
+          <Tabs.TabPane key="1" tab="基本属性">
+          </Tabs.TabPane>
+          <Tabs.TabPane key="2" tab="布局属性">
+          </Tabs.TabPane>
+          <Tabs.TabPane key="3" tab="Schema">
+            <div class="tab-content">
+                <codemirror
+                  v-model="schema"
+                  placeholder="Code goes here..."
+                  :style="{ height: '100%' }"
+                  :autofocus="true"
+                  :indent-with-tab="true"
+                  :tab-size="2"
+                  :extensions="extensions"
+                />
+            </div>
+          </Tabs.TabPane>
+        </Tabs>
+      </div>
     </div>
   </PageContainer>
 </template>
 
 <script setup>
 import { PageContainer } from '@ant-design-vue/pro-layout';
-import { onMounted, ref, reactive, toRaw, provide } from 'vue';
+import { onMounted, ref, reactive, toRaw, provide, watchEffect } from 'vue';
 import { List, Form, message, Button, Input, Tabs } from 'ant-design-vue';
 import { DeleteOutlined } from '@ant-design/icons-vue';
 import draggable from 'vuedraggable'
+import { Codemirror } from 'vue-codemirror'
+import { javascript } from '@codemirror/lang-javascript'
+import { oneDark } from '@codemirror/theme-one-dark'
+import { keymap } from "@codemirror/view"
 import { findComponents } from '../../service/compoment'
 import { createComponent } from '@/utils/component';
 import { getPage, savePage } from '@/service/page';
 import { useRoute } from 'vue-router';
 import Nested from './Nested.vue'
+import { uuid } from '@/utils/uuid';
 
 const currentItem = ref(null)
 const selectItem = item => {
@@ -102,7 +118,6 @@ const formRule = reactive({
   key: [{ required: true, message: '请输入页面key' }],
 })
 const componentsMap = new Map()
-
 const deleteList = [{ id: 1 }]
 const list1 = ref([
   {
@@ -140,15 +155,33 @@ const list1 = ref([
   }
 ])
 const list2 = ref([])
-
+const schema = ref('[]')
+watchEffect(() => {
+  schema.value = JSON.stringify(list2.value, null, 2)
+})
+const extensions = [
+  javascript(), 
+  oneDark,
+  keymap.of([{
+    key: "Ctrl-s",
+    run() { 
+      list2.value = JSON.parse(schema.value)
+      return true
+    }
+  }])
+]
 const log = (evt) => {
   console.log(evt)
 }
 
-const cloneDog = (component) => {
+const cloneComponent = ({ name, key, type, props, childNames }) => {
   return {
-    ...component,
-    id: new Date().getTime().toString(32).substring(3,),
+    name,
+    key,
+    type,
+    props,
+    childNames,
+    id: uuid(10),
     children: []
   };
 }
@@ -200,9 +233,6 @@ const content = () => (
     </Form>
   </>
 )
-
-onMounted(() => {
-})
 
 onMounted(async () => {
   const res = await findComponents()
@@ -258,7 +288,7 @@ onMounted(async () => {
     .list-item
       padding 4px 16px
       border-bottom 1px solid #eee
-  .right
+  .left
     display flex
     flex-direction column
     .top
@@ -293,6 +323,9 @@ onMounted(async () => {
           .delete-hint
             margin-top 4px
             font-size 10px
+  .right
+    .tab-content
+      height calc(100vh - 265px)
   .view-list
     box-sizing border-box
     min-width 300px
