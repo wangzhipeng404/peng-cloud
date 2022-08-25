@@ -1,7 +1,10 @@
 import('@ant-design-vue/pro-layout/dist/style.less')
 import('vant/lib/index.less')
-
+import { initGlobal } from '@/utils/initGlobal'
+import { importJS } from '@/utils/importJS'
 async function initWeb () {
+  initGlobal()
+  importJS('./js/stylus.min.js')
   const { initImportMap } = await import('./utils/importmap')
   await initImportMap()
   const { createApp, defineAsyncComponent } = await import('vue')

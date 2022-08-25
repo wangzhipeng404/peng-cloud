@@ -7,23 +7,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
   <title>Peng Cloud</title>
-  <script>
-    var process = {
-      env: {
-        NODE_ENV: 'development'
-      }
-    }
-    function insertStyle(style) {
-      let styleEl = null
-      if (style) {
-        let styleEl = document.createElement('style')
-        styleEl.innerText = style.replace(/\n/g, '')
-        document.getElementsByTagName('head')[0].appendChild(styleEl)
-      }
-      return styleEl
-    }
-  </script>
-  <script src="./js/stylus.min.js"></script>
 </head>
 
 <body>
