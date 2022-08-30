@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import BasicLayout  from '../layouts/BasicLayout.vue';
 import Home from '../views/home/index.vue';
+import Runtime from '../views/page/runtime'
 
 
 export default createRouter({
@@ -56,6 +57,12 @@ export default createRouter({
               name: 'pageEditor',
               meta: { hideInMenu: true, title: '编辑', icon: 'icon-icon-test',  },
               component: () => import(/* webpackChunkName: 'page-editor' */ '../views/page-editor/index.vue'),
+            },
+            {
+              path: '/pages/tmagic/:id?',
+              name: 'pageTmagic',
+              meta: { hideInMenu: true, title: '编辑', icon: 'icon-icon-test',  },
+              component: () => import(/* webpackChunkName: 'page-editor' */ '../views/page-editor/tmagic.vue'),
             }
           ]
         },
@@ -86,6 +93,12 @@ export default createRouter({
       path: '/preview',
       meta: { title: '预览', icon: 'icon-icon-test', hideInMenu: true },
       component: () => import(/* webpackChunkName: 'lib-list' */ '../views/preview/Preview.vue'),
+    },
+    {
+      name: 'runtime',
+      path: '/runtime',
+      meta: { title: 'runtime', icon: 'icon-icon-test', hideInMenu: true },
+      component: Runtime,
     },
   ],
 });

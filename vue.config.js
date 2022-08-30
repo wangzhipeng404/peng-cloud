@@ -1,4 +1,5 @@
 const { defineConfig } = require('@vue/cli-service')
+const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin')
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
  
 module.exports = defineConfig({
@@ -17,10 +18,20 @@ module.exports = defineConfig({
     // experiments: {
     //   topLevelAwait: true,
     // },
+    module: {
+      rules: [
+        {
+          test: /\.ts$/,
+          loader: 'ts-loader',
+          options: { appendTsSuffixTo: [/\.vue$/] }
+        }
+      ]
+    },
     externals: {
       vue: 'Vue',
     },
     resolve: {
+      extensions: ['.ts', '.js'],
       fallback: {
         fs:false,
         crypto: false,
@@ -33,6 +44,6 @@ module.exports = defineConfig({
         url: false
       }
     },
-    plugins: [new NodePolyfillPlugin()],
+    plugins: [new NodePolyfillPlugin(), new MonacoEditorWebpackPlugin()],
   }
 })

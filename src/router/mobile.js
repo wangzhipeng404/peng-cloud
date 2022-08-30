@@ -16,5 +16,11 @@ export default createRouter({
       meta: { title: '页面', icon: 'icon-icon-test' },
       component: () => import('../views/page/index.vue'),
     },
+    {
+      name: 'runtime',
+      path: '/runtime/:id?',
+      meta: { title: '页面', icon: 'icon-icon-test' },
+      component: () => import('../views/page/index.vue'),
+    },
   ],
 });
