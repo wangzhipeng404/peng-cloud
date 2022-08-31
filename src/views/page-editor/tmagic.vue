@@ -72,7 +72,7 @@ const data = ref({
   items: []
 })
 
-const runtimeUrl = "/#/runtime"
+const runtimeUrl = location.pathname + "#/runtime"
 const propsConfigs = [
 {
 
