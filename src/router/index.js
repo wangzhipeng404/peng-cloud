@@ -21,26 +21,6 @@ export default createRouter({
           component: Home,
         },
         {
-          path: '/compoents',
-          name: 'compoents',
-          meta: { title: '组件管理', icon: 'icon-icon-test', hideChildrenInMenu: true },
-          redirect: '/compoents/list',
-          children: [
-            {
-              name: 'component-list',
-              path: 'list',
-              meta: { title: '列表', icon: 'icon-icon-test' },
-              component: () => import(/* webpackChunkName: 'component-list' */ '../views/component-list/index.vue'),
-            },
-            {
-              path: '/compoents/editor/:id?',
-              name: 'editor',
-              meta: { hideInMenu: true, title: '编辑', icon: 'icon-icon-test',  },
-              component: () => import(/* webpackChunkName: 'component-editor' */ '../views/component-editor/index.vue'),
-            }
-          ]
-        },
-        {
           name: 'pages',
           path: 'pages',
           meta: { title: '页面管理', icon: 'icon-icon-test', hideChildrenInMenu: true },
@@ -58,11 +38,31 @@ export default createRouter({
               meta: { hideInMenu: true, title: '编辑', icon: 'icon-icon-test',  },
               component: () => import(/* webpackChunkName: 'page-editor' */ '../views/page-editor/index.vue'),
             },
+          ]
+        },
+        {
+          path: '/tmagic',
+          name: 'pageTmagic',
+          meta: { title: 'TMagic', icon: 'icon-icon-test',  },
+          component: () => import(/* webpackChunkName: 'page-tmagic' */ '../views/page-editor/tmagic.vue'),
+        },
+        {
+          path: '/compoents',
+          name: 'compoents',
+          meta: { title: '组件管理', icon: 'icon-icon-test', hideChildrenInMenu: true },
+          redirect: '/compoents/list',
+          children: [
             {
-              path: '/pages/tmagic/:id?',
-              name: 'pageTmagic',
+              name: 'component-list',
+              path: 'list',
+              meta: { title: '列表', icon: 'icon-icon-test' },
+              component: () => import(/* webpackChunkName: 'component-list' */ '../views/component-list/index.vue'),
+            },
+            {
+              path: '/compoents/editor/:id?',
+              name: 'editor',
               meta: { hideInMenu: true, title: '编辑', icon: 'icon-icon-test',  },
-              component: () => import(/* webpackChunkName: 'page-editor' */ '../views/page-editor/tmagic.vue'),
+              component: () => import(/* webpackChunkName: 'component-editor' */ '../views/component-editor/index.vue'),
             }
           ]
         },

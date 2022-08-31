@@ -1,6 +1,8 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <magic-ui-page v-if="pageConfig" :config="pageConfig"></magic-ui-page>
+  <div :style="{ width: '100%', height: '100%', display: 'flex' }">
+    <magic-ui-page v-if="pageConfig" :config="pageConfig" style="width: 100%; height: 100%"></magic-ui-page>
+  </div>
 </template>
 
 <script>
@@ -22,7 +24,8 @@ export default defineComponent({
     provide('app', app);
     watch(pageConfig, async () => {
       await nextTick();
-      const page = document.querySelector<HTMLElement>('.magic-ui-page');
+      const page = document.querySelector('.magic-ui-page');
+        console.log(page, window.magic)
       page && window.magic.onPageElUpdate(page);
     });
     console.log(window.magic)
@@ -45,14 +48,18 @@ export default defineComponent({
         selectedId.value = id;
         const el = document.getElementById(`${id}`);
         if (el) return el;
+        console.log('未找到')
         // 未在当前文档下找到目标元素，可能是还未渲染，等待渲染完成后再尝试获取
         return nextTick().then(() => document.getElementById(`${id}`));
       },
       add({ config, parentId }) {
-        console.log('add config', config);
+        console.log('add config', config, curPageId.value);
         if (!root.value) throw new Error('error');
         if (!selectedId.value) throw new Error('error');
-        if (!parentId) throw new Error('error');
+        if (!parentId) {
+          parentId = curPageId.value
+          // throw new Error('error');
+        }
         const parent = getNodePath(parentId, [root.value]).pop();
         if (!parent) throw new Error('未找到父节点');
         if (parent.id !== selectedId.value) {
@@ -67,7 +74,10 @@ export default defineComponent({
         console.log('update config', config);
         if (!root.value) throw new Error('error');
         const node = getNodePath(config.id, [root.value]).pop();
-        if (!parentId) throw new Error('error');
+        if (!parentId) {
+          parentId = curPageId.value
+          // throw new Error('error');
+        }
         const parent = getNodePath(parentId, [root.value]).pop();
         if (!node) throw new Error('未找到目标节点');
         if (!parent) throw new Error('未找到父节点');

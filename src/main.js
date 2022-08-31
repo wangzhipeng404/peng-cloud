@@ -22,7 +22,7 @@ async function initWeb () {
   const {default: router} = await import('./router/index')
   const {default: App} = await import('./App.vue')
   const { findComponents } = await import('./service/compoment')
-  const { createComponent }  = await import('./utils/parser')
+  const { createComponent }  = await import('./utils/component')
   const { default: magicUI } = await import('@/components/tmagic-ui/src')
   const app = createApp(App)
   app.use(router)
@@ -37,7 +37,10 @@ async function initWeb () {
   res.map(item => {
     app.component(item.key, defineAsyncComponent(() => createComponent(item.script, item.key)))
   })
-  Object.keys(magicUI).map(k => app.component(k, magicUI[k]))
+  Object.keys(magicUI).map(k => {
+    console.log(k)
+    app.component(k, magicUI[k])
+  })
   app.mount('#app');
 }
 

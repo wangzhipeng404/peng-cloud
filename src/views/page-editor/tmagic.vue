@@ -16,25 +16,27 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { FolderOpened, SwitchButton, Tickets, ArrowLeft, Finished, Document } from '@element-plus/icons-vue'
-import { useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
+import { FolderOpened, SwitchButton, Tickets, Finished, Document } from '@element-plus/icons-vue'
+// import { useRouter } from "vue-router";
 import { NodeType } from '@tmagic/schema';
+import { findComponents } from "@/service/compoment";
+import { message } from "ant-design-vue";
 
-const router = useRouter()
+// const router = useRouter()
 const editor = ref()
 const menu = ref({
   left: [
-    {
-      type: 'button',
-      text: '返回',
-      icon: ArrowLeft,
-      handler: () => {
-        if (router) {
-          router.push('/');
-        }
-      },
-    },
+    // {
+    //   type: 'button',
+    //   text: '返回',
+    //   icon: ArrowLeft,
+    //   handler: () => {
+    //     if (router) {
+    //       router.push('/');
+    //     }
+    //   },
+    // },
   ],
   center: ['delete', 'undo', 'redo', 'zoom-in', 'zoom-out'],
   right: [
@@ -43,6 +45,7 @@ const menu = ref({
       text: '保存',
       icon: Finished,
       handler: () => {
+        message.info('功能还在开发中')
         // commitHandler();
       },
     },
@@ -69,9 +72,43 @@ const data = ref({
   items: []
 })
 
-const runtimeUrl = "/#/runtime?localPreview=true&page=index"
+const runtimeUrl = "/#/runtime"
 const propsConfigs = [
-  // 组件属性列表
+{
+
+  text: [
+  {
+    type: 'select',
+    text: '字体颜色',
+    name: 'color',
+    options: [
+      {
+        text: '红色字体',
+        value: 'red',
+      },
+      {
+        text: '蓝色字体',
+        value: 'blue',
+      },
+    ],
+  },
+    {
+      name: 'text',
+      text: '文本',
+    },
+    {
+      name: 'multiple',
+      text: '多行文本',
+      type: 'switch',
+    },
+  ],
+  button: [
+    {
+      name: 'text',
+      text: '文本',
+    },
+  ]
+}
 ]
 const propsValues = [
   // 组件默认值
@@ -116,6 +153,18 @@ const moveableOptions = (core) => {
   options.resizable = !isPage;
   return options;
 }
+
+onMounted(async () => {
+  const res = await findComponents()
+  componentGroupList.value.push({
+    title: '自定义组件',
+    items: res.map(c => ({
+      icon: Tickets,
+      text: c.name,
+      type: c.key
+    }))
+  })
+})
 </script>
 
 <style lang="stylus">
