@@ -14,8 +14,18 @@ useUserTheme();
 <style>
 #app {
   height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: auto;
 }
 
+.magic-ui-container {
+  background-color: rgba(136, 136, 136, 0.5);
+}
+
+.action-area {
+  background-color: rgba(51, 153, 255, 0.5) !important;
+}
 .ant-pro-sider {
   z-index: 20;
 }
