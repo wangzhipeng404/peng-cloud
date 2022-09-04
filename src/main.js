@@ -11,19 +11,35 @@ async function initWeb () {
   const { initImportMap } = await import('./utils/importmap')
   await initImportMap()
   const { createApp, defineAsyncComponent } = await import('vue')
-  const { default:  ElementPlus } = await import("element-plus")
-  const { default: zhCn } = await import("element-plus/es/locale/lang/zh-cn");
-  const { default: MagicEditor } =  await import("@tmagic/editor");
-  const { default: MagicForm } =  await import("@tmagic/form");
-  const { ConfigProvider } = await import('ant-design-vue');
-  const { default: vant } = await import('vant')
-  const {default: ProLayout } = await import('@ant-design-vue/pro-layout')
-  const { PageContainer } = await import('@ant-design-vue/pro-layout')
-  const {default: router} = await import('./router/index')
-  const {default: App} = await import('./App.vue')
-  const { findComponents } = await import('./service/compoment')
-  const { createComponent }  = await import('./utils/component')
-  const { default: magicUI } = await import('@/components/tmagic-ui/src')
+
+  const imports = await Promise.all([
+    import("element-plus"),
+    import("element-plus/es/locale/lang/zh-cn"),
+    import("@tmagic/editor"),
+    import("@tmagic/form"),
+    import('ant-design-vue'),
+    import('vant'),
+    import('@ant-design-vue/pro-layout'),
+    import('./router/index'),
+    import('./App.vue'),
+    import('./service/compoment'),
+    import('./utils/component'),
+    import('@/components/tmagic-ui/src')
+  ])
+  const [
+    { default:  ElementPlus },
+    { default: zhCn },
+    { default: MagicEditor },
+    { default: MagicForm },
+    { ConfigProvider },
+    { default: vant },
+    {default: ProLayout, PageContainer },
+    {default: router},
+    {default: App},
+    { findComponents },
+    { createComponent },
+    { default: magicUI }
+  ] = imports
   const app = createApp(App)
   app.use(router)
   app.use(ConfigProvider)
@@ -35,10 +51,9 @@ async function initWeb () {
   app.use(MagicForm)
   const res = await findComponents()
   res.map(item => {
-    app.component(item.key, defineAsyncComponent(() => createComponent(item.script, item.key)))
+    app.component(item.type, defineAsyncComponent(() => createComponent(item.script, item.type)))
   })
   Object.keys(magicUI).map(k => {
-    console.log(k)
     app.component(k, magicUI[k])
   })
   app.mount('#app');

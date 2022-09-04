@@ -6,8 +6,8 @@
         <Form.Item label="组件名称" name="name">
           <Input v-model:value="filterState.name" />
         </Form.Item>
-        <Form.Item label="组件key" name="key">
-          <Input v-model:value="filterState.key" />
+        <Form.Item label="组件key" name="type">
+          <Input v-model:value="filterState.type" />
         </Form.Item>
         <Form.Item>
           <Button type="primary" @click="onSearch">搜索</Button>
@@ -43,11 +43,11 @@ const router = useRouter()
 const dataSource = ref([])
 const filteredData = ref(dataSource.value)
 const onSearch = () => {
-  filteredData.value = dataSource.value.filter(d => d.name.indexOf(filterState.name) > -1 && d.key.indexOf(filterState.key)  -1)
+  filteredData.value = dataSource.value.filter(d => d.name.indexOf(filterState.name) > -1 && d.type.indexOf(filterState.type)  -1)
 }
 const onReset = () => {
   filterState.name = ''
-  filterState.key = ''
+  filterState.type = ''
   filteredData.value = dataSource.value
 }
 const getData = async () => {
@@ -62,10 +62,10 @@ const getData = async () => {
     onSearch()
 }
 const onAdd = () => router.push({ name: 'editor' })
-const onDelete = async (id, key) => {
+const onDelete = async (id, type) => {
   await deleteComponet(id)
   getData()
-  unregistComponet(key)
+  unregistComponet(type)
   message.success({
     content: '删除成功',
     duration: 3
@@ -73,7 +73,7 @@ const onDelete = async (id, key) => {
 }
 const filterState = reactive({
   name: '',
-  key: ''
+  type: ''
 })
 
 const columns = ref([
@@ -83,9 +83,9 @@ const columns = ref([
     key: 'name',
   },
   {
-    title: 'key',
-    dataIndex: 'key',
-    key: 'key',
+    title: '英文名',
+    dataIndex: 'type',
+    key: 'type',
   },
   {
     title: '创建时间',
@@ -109,7 +109,7 @@ const columns = ref([
             title="确认删除此组件？"
             okText="确认"
             cancelText="取消"
-            onConfirm={() => onDelete(record.id, record.key)}
+            onConfirm={() => onDelete(record.id, record.type)}
           >
             <Button size="small" type="link" onClick={() => console.log(record)}>删除</Button>
           </Popconfirm>

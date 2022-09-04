@@ -1,5 +1,5 @@
 <template>
-  <x-shell :script="script" />
+  <x-shell :script="script" v-bind="props" />
 </template>
 
 <script>
@@ -15,11 +15,20 @@ export default {
   setup () {
     const script = ref('')
     const style = ref('')
+    const props = ref({})
     const onMessage = (e) => {
       const { data: { type, data, key } } = e
       if (type == 'editore2preview') {
         console.log(type, key)
-        script.value = data
+        script.value = data.script
+        if (data.props) {
+          try {
+            props.value = JSON.parse(data.props)
+          } catch(e) {
+            console.log('解析props出错')
+            console.log(e)
+          }
+        }
       }
     }
     onMounted(() => {
@@ -29,7 +38,8 @@ export default {
     })
     return {
       script,
-      style
+      style,
+      props
     }
   }
 }

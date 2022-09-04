@@ -17,11 +17,13 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { FolderOpened, SwitchButton, Tickets, Finished, Document } from '@element-plus/icons-vue'
+import { FolderOpened, Tickets, Finished, Document } from '@element-plus/icons-vue'
 // import { useRouter } from "vue-router";
 import { NodeType } from '@tmagic/schema';
+import { editorService, propsService } from '@tmagic/editor';
 import { findComponents } from "@/service/compoment";
 import { message } from "ant-design-vue";
+import { findPages } from "@/service/page";
 
 // const router = useRouter()
 const editor = ref()
@@ -72,47 +74,47 @@ const data = ref({
   items: []
 })
 
-const runtimeUrl = "/#/runtime"
-const propsConfigs = [
-{
-
-  text: [
-  {
+const runtimeUrl = `${location.pathname}#/runtime`
+const propsConfigs = ref({
+  'van-row': [{
+    text: '间隔',
+    name: 'gutter'
+  }],
+  'van-col': [{
     type: 'select',
-    text: '字体颜色',
-    name: 'color',
+    text: '占比',
+    name: 'span',
     options: [
-      {
-        text: '红色字体',
-        value: 'red',
-      },
-      {
-        text: '蓝色字体',
-        value: 'blue',
-      },
-    ],
-  },
+      { text: '24', value: 24 },
+      { text: '16', value: 16 },
+      { text: '12', value: 12 },
+      { text: '8', value: 8 },
+      { text: '6', value: 6 },
+      { text: '4', value: 4 },
+      { text: '3', value: 3 },
+      { text: '2', value: 2 },
+      { text: '1', value: 1 },
+    ]
+  }],
+  'van-image': [
     {
-      name: 'text',
-      text: '文本',
+      name: 'width',
+      text: '宽度',
     },
     {
-      name: 'multiple',
-      text: '多行文本',
-      type: 'switch',
+      name: 'height',
+      text: '高度',
     },
-  ],
-  button: [
     {
-      name: 'text',
-      text: '文本',
+      name: 'src',
+      text: '图片地址',
     },
   ]
-}
-]
-const propsValues = [
-  // 组件默认值
-]
+})
+const propsValues = ref({
+
+})
+
 
 const componentGroupList = ref([
   {
@@ -120,8 +122,13 @@ const componentGroupList = ref([
     items: [
       {
         icon: FolderOpened,
-        text: '组',
-        type: 'magic-ui-container',
+        text: 'Row',
+        type: 'van-row',
+      },
+      {
+        icon: FolderOpened,
+        text: 'Col',
+        type: 'van-col',
       },
     ],
   },
@@ -130,13 +137,8 @@ const componentGroupList = ref([
     items: [
       {
         icon: Tickets,
-        text: '文本',
-        type: 'magic-ui-text',
-      },
-      {
-        icon: SwitchButton,
-        text: '按钮',
-        type: 'magic-ui-button',
+        text: '图片',
+        type: 'van-image',
       },
     ],
   },
@@ -158,11 +160,48 @@ onMounted(async () => {
   const res = await findComponents()
   componentGroupList.value.push({
     title: '自定义组件',
-    items: res.map(c => ({
-      icon: Tickets,
-      text: c.name,
-      type: c.key
-    }))
+    items: res.map(c => {
+      // eslint-disable-next-line no-unused-vars
+      const { script, code, propsConfigs: configs, initValues, eventConfigs, createTime, updateTime, type, ...others } = c
+      let initVal = {}
+      try {
+        initVal = JSON.parse(initValues)
+      } catch (e) {
+        console.log('解析initValue出错')
+        console.log(e)
+      }
+      propsService.setPropsValues(c.type, initVal)
+      let config = []
+      try {
+        config = JSON.parse(configs)
+      } catch (e) {
+        console.log('解析propsConfigs出错')
+        console.log(e)
+      }
+      propsService.setPropsConfig(c.type, config)
+      return {
+        icon: Tickets,
+        text: c.name,
+        type: c.type
+      }
+    })
+  })
+  console.log(propsConfigs.value)
+  const pages = await findPages()
+  const items = pages.map(p => {
+    const { protocl, ...others } = p
+    return {
+      ...others,
+      items: JSON.parse(protocl).items
+    }
+  })
+  console.log(data.value)
+  data.value.items.push(...items)
+  console.log(editorService.set('root', data.value))
+  editorService.set('page', data.value.items[0])
+  editorService.set('parent', data.value.items[0])
+  propsService.getPropsConfig('van-image').then(res => {
+    console.log(res)
   })
 })
 </script>
