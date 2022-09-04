@@ -1,30 +1,34 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div class="item-content" :class="{ active: currentItem && item.id == currentItem.id }" v-bind="item.props" @click.stop="selectItem(item)">
+  <component 
+    :is="componentsMap.has(item.type) ? componentsMap.get(item.type) : item.type"
+    v-bind="item"
+    :class="{ 
+      active: currentItem && item.id == currentItem.id,
+      'min-height': item.childNames && item.childNames.length > 0
+    }"
+    @click.stop="selectItem(item)"
+    class="item-content"
+  >
     <span class="component-name">{{item.name}}</span>
-    <component 
-      :is="item.type == 1 ? item.key : componentsMap.get(item.key)"
-      v-bind="item.props"
+    <draggable
+      v-if="item.childNames && item.childNames.length > 0"
+      class="dragArea"
+      :list="item.items"
+      :group="group"
+      :item-key="itemKey"
+      @change="log"
     >
-      <draggable
-        v-if="item.childNames.length > 0"
-        class="dragArea"
-        :list="item.children"
-        :group="group"
-        :item-key="itemKey"
-        @change="log"
-      >
-        <template #item="{ element }">
-          <nested-draggable
-            :item="element" 
-            :item-key="itemKey"
-            :group="group"
-            :components-map="componentsMap"
-          />
-        </template>
-      </draggable>
-    </component>
-  </div>
+      <template #item="{ element }">
+        <nested-draggable
+          :item="element" 
+          :item-key="itemKey"
+          :group="group"
+          :components-map="componentsMap"
+        />
+      </template>
+    </draggable>
+  </component>
 </template>
 <script setup>
 import { defineProps, inject } from 'vue'
@@ -64,11 +68,15 @@ export default defineComponent({
 <style lang="stylus" scoped>
 .item-content
   position relative
-  padding 8px
   border 1px dashed #595959
-  display flex
-  overflow-y auto
-  min-height 100px
+  background rgba(255, 255, 255, 1)
+.preview-component
+  position absolute
+  top 0
+  left 0
+  width 100%
+  height 100%
+  z-index 0
 .component-name
   position absolute
   top 10px
@@ -89,4 +97,6 @@ export default defineComponent({
   overflow-y auto
 .active
   border-color #40a9ff
+.min-height
+  min-height 100px
 </style>

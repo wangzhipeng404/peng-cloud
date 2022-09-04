@@ -33,6 +33,6 @@ export default defineComponent({
     }
   },
   render () {
-    return h(this.component);
+    return h(this.component, this.$attrs);
   },
 });

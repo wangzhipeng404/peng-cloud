@@ -1,7 +1,7 @@
 import { db } from './db'
 
 export async function savePage(pageObj) {
-    const count = await db.pages.where('key').equalsIgnoreCase(pageObj.key).count()
+    const count = await db.pages.where('type').equalsIgnoreCase(pageObj.type).count()
     if (!pageObj.id && count > 0) {
         throw 'key已存在，请修改'
     }

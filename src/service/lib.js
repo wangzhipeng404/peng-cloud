@@ -1,7 +1,7 @@
 import { db } from './db'
 
 export async function saveLib(libObj) {
-    const count = await db.libs.where('key').equalsIgnoreCase(libObj.key).count()
+    const count = await db.libs.where('type').equalsIgnoreCase(libObj.type).count()
     if (!libObj.id && count > 0) {
         throw 'key已存在，请修改'
     }

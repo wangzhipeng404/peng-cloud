@@ -6,6 +6,7 @@
     :class="`magic-ui-component${config.className ? ` ${config.className}` : ''}`"
     :style="style"
     :config="config"
+    v-bind="config"
   ></component>
 </template>
 

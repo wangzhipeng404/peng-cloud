@@ -5,13 +5,24 @@ async function initMobile () {
   const { initImportMap } = await import('./utils/importmap')
   await initImportMap()
   const { createApp, defineAsyncComponent } = await import('vue')
-  const { default: Core } = await import('@tmagic/core')
-  const { getUrlParam } = await import('@tmagic/utils')
-  const { default: vant } = await import('vant')
-  const { default: router } = await import('./router/mobile')
-  const { findComponents } = await import('./service/compoment')
-  const { createComponent }  = await import('./utils/component')
-  const { default: App } = await import('./AppMobile.vue')
+  const imports = Promise.all([
+    import('@tmagic/core'),
+    import('@tmagic/utils'),
+    import('vant'),
+    import('./router/mobile'),
+    import('./service/compoment'),
+    import('./utils/component'),
+    import('./AppMobile.vue'),
+  ])
+  const [
+    { default: Core },
+    { getUrlParam }, 
+   { default: vant },
+   { default: router },
+   { findComponents },
+   { createComponent },
+   { default: App }
+  ] = imports
   const getLocalConfig = () => {
     const configStr = localStorage.getItem('magicDSL');
     if (!configStr) return [];
@@ -27,7 +38,7 @@ async function initMobile () {
   app.use(vant)
   const res = await findComponents()
   res.map(item => {
-    app.component(item.key, defineAsyncComponent(() => createComponent(item.script, item.key)))
+    app.component(item.type, defineAsyncComponent(() => createComponent(item.script, item.type)))
   })
   const core = new Core({
     config: ((getUrlParam('localPreview') ? getLocalConfig() : window.magicDSL) || [])[0] || {},

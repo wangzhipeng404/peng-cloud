@@ -1,7 +1,7 @@
 import { db } from './db'
 
 export async function saveComponent(componetObj) {
-    const count = await db.components.where('key').equalsIgnoreCase(componetObj.key).count()
+    const count = await db.components.where('type').equalsIgnoreCase(componetObj.type).count()
     if (!componetObj.id && count > 0) {
         throw '组件key已存在，请修改'
     }

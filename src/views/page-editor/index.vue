@@ -5,7 +5,7 @@
       <div class="left">
         <div class="top">
           <List class="components-list">
-            <draggable :list="list1" :sort="false" :group="{ name: 'people', pull: 'clone', put: false }"
+            <draggable :list="componentList" :sort="false" :group="{ name: 'people', pull: 'clone', put: false }"
               :clone="cloneComponent" @change="log" item-key="id">
               <template #item="{ element }">
                 <List.Item class="list-item">
@@ -40,7 +40,7 @@
       <div class="middle">
           <draggable
             class="dragArea view-list"
-            :list="list2"
+            :list="viewList"
             group="people"
             item-key="id"
             @change="log"
@@ -56,10 +56,21 @@
           </draggable>
       </div>
       <div class="right">
-        <Tabs centered>
+        <Tabs>
           <Tabs.TabPane key="1" tab="基本属性">
+            <PropsForm
+              :config="currentConfig"
+              v-model:value="currentItem"
+              v-if="currentItem"
+              :key="currentItem.id"
+            />
           </Tabs.TabPane>
           <Tabs.TabPane key="2" tab="布局属性">
+            <StyleForm
+              v-model:value="currentItem.style"
+              v-if="currentItem"
+              :key="currentItem.id"
+            />
           </Tabs.TabPane>
           <Tabs.TabPane key="3" tab="Schema">
             <div class="tab-content">
@@ -82,7 +93,7 @@
 
 <script setup>
 import { PageContainer } from '@ant-design-vue/pro-layout';
-import { onMounted, ref, reactive, toRaw, provide, watchEffect } from 'vue';
+import { onMounted, ref, reactive, toRaw, provide, watchEffect, computed } from 'vue';
 import { List, Form, message, Button, Input, Tabs } from 'ant-design-vue';
 import { DeleteOutlined } from '@ant-design/icons-vue';
 import draggable from 'vuedraggable'
@@ -96,6 +107,8 @@ import { getPage, savePage } from '@/service/page';
 import { useRoute } from 'vue-router';
 import Nested from './Nested.vue'
 import { uuid } from '@/utils/uuid';
+import PropsForm from './PropsForm.vue'
+import StyleForm from './StyleForm.vue'
 
 const currentItem = ref(null)
 const selectItem = item => {
@@ -111,7 +124,7 @@ const fromRef = ref(null)
 const formState = reactive({
   id: +route.params.id,
   name: '',
-  key: '',
+  type: '',
 })
 const formRule = reactive({
   name: [{ required: true, message: '请输入页面名称' }],
@@ -119,45 +132,82 @@ const formRule = reactive({
 })
 const componentsMap = new Map()
 const deleteList = [{ id: 1 }]
-const list1 = ref([
+const componentList = ref([
   {
     id: -1,
     name: 'Row',
-    key: 'van-row',
-    type: '1',
+    type: 'van-row',
     childNames: ['van-col'],
-    props: {
-      style: { flex: 1 }
-    }
+    style: { display: 'flex' }
   },
   {
     id: -2,
     name: 'Col',
-    key: 'van-col',
-    type: '1',
+    type: 'van-col',
     childNames: ['*'],
-    props: {
-      style: { display: 'flex', flex: 1 },
-      span: '24'
-    }
+    style: { display: 'flex' },
+    span: '12'
   },
   {
     id: -3,
     name: '图片',
-    key: 'van-image',
-    type: '1',
+    type: 'van-image',
     childNames: [],
-    props: {
-      width: '100',
-      height: '100',
-      src: '',
-    }
+    style: {
+    },
+    width: '100px',
+    height: '100px',
+    src: '',
   }
 ])
-const list2 = ref([])
+const viewList = ref([])
 const schema = ref('[]')
+const propsConfig = ref({
+  'van-row': [{
+    text: '间隔',
+    name: 'gutter'
+  }],
+  'van-col': [{
+    type: 'select',
+    text: '占比',
+    name: 'span',
+    options: [
+      { text: '24', value: 24 },
+      { text: '16', value: 16 },
+      { text: '12', value: 12 },
+      { text: '8', value: 8 },
+      { text: '6', value: 6 },
+      { text: '4', value: 4 },
+      { text: '3', value: 3 },
+      { text: '2', value: 2 },
+      { text: '1', value: 1 },
+    ]
+  }],
+  'van-image': [
+    {
+      name: 'width',
+      text: '宽度',
+    },
+    {
+      name: 'height',
+      text: '高度',
+    },
+    {
+      name: 'src',
+      text: '图片地址',
+    },
+  ]
+})
+const currentConfig = computed(() => {
+  if (currentItem.value) {
+    console.log('current', currentItem.value, currentItem.value.type)
+    console.log('currentConfig', propsConfig.value[currentItem.value.type])
+    return propsConfig.value[currentItem.value.type]
+  }
+  return []
+})
 watchEffect(() => {
-  schema.value = JSON.stringify(list2.value, null, 2)
+  schema.value = JSON.stringify(viewList.value, null, 2)
 })
 const extensions = [
   javascript(), 
@@ -165,7 +215,7 @@ const extensions = [
   keymap.of([{
     key: "Ctrl-s",
     run() { 
-      list2.value = JSON.parse(schema.value)
+      viewList.value = JSON.parse(schema.value)
       return true
     }
   }])
@@ -174,31 +224,26 @@ const log = (evt) => {
   console.log(evt)
 }
 
-const cloneComponent = ({ name, key, type, props, childNames }) => {
+const cloneComponent = (item) => {
   return {
-    name,
-    key,
-    type,
-    props,
-    childNames,
+    ...item,
     id: uuid(10),
-    children: []
+    items: []
   };
 }
 
 const onSubmit = async () => {
   await fromRef.value.validate()
-  if (list2.value.length == 0) {
+  if (viewList.value.length == 0) {
     message.error({ content: '请拖动组件到页面内', duration: 3 })
     return
   }
   console.log('reust之前')
   const result = {
-    type: '2',
     name: formState.name,
-    key: formState.key,
+    type: formState.type,
     protocl: JSON.stringify({
-      views: toRaw(list2.value)
+      items: toRaw(viewList.value)
     })
   }
   console.log(result)
@@ -224,8 +269,8 @@ const content = () => (
       <Form.Item label="页面名称" name="name">
         <Input v-model:value={formState.name} />
       </Form.Item>
-      <Form.Item label="页面key" name="key">
-        <Input v-model:value={formState.key} disabled={!!formState.id} />
+      <Form.Item label="页面key" name="type">
+        <Input v-model:value={formState.type} disabled={!!formState.id} />
       </Form.Item>
       <Form.Item>
         <Button type="primary" onClick={onSubmit}>保存</Button>
@@ -237,26 +282,47 @@ const content = () => (
 onMounted(async () => {
   const res = await findComponents()
   await Promise.all(res.map(item => {
-    return createComponent(item.script, item.key).then(res => {
+    return createComponent(item.script, item.type).then(res => {
       console.log(res)
-      componentsMap.set(item.key, res)
+      componentsMap.set(item.type, res)
     })
   }))
-  list1.value = [
-    ...list1.value, 
-    ...res.map(item => ({ 
-      ...item, 
-      props: {
+  componentList.value = [
+    ...componentList.value, 
+    ...res.map(item => {
+      // eslint-disable-next-line no-unused-vars
+      const { script, code, propsConfigs, initValues, eventConfigs, createTime, updateTime, type, ...others } = item
+      let itemProps = {}
+      try {
+        itemProps = JSON.parse(initValues)
+      } catch (e) {
+        console.log('解析initValue出错')
+        console.log(e)
+      }
+      let config = []
+      try {
+        config = JSON.parse(propsConfigs)
+      } catch (e) {
+        console.log('解析propsConfigs出错')
+        console.log(e)
+      }
+      propsConfig.value[type] = config
+      return {
+        ...others,
+        ...itemProps,
+        type,
         style: { flex: 1 }
       }
-    }))]
+    }
+  )]
+  console.log('propsConfig', propsConfig.value)
   if (route.params.id) {
     console.log(route.params.id)
     getPage(route.params.id).then(res => {
       if (res) {
         formState.name = res.name
-        formState.key = res.key
-        list2.value = JSON.parse(res.protocl).views
+        formState.type = res.type
+        viewList.value = JSON.parse(res.protocl).items
       }
     })
   }
@@ -274,13 +340,21 @@ onMounted(async () => {
     overflow auto
     background #fff
   .middle
-    flex 1
+    box-sizing border-box
+    flex-grow 1
+    flex-shrink 0
     margin 0 16px
     height 100%
-    max-width 600px
+    max-width 375px
     overflow-x hidden
     overflow-y auto
     background #fff
+    scrollbar-width none
+    -ms-overflow-style none
+    overflow-x hidden
+    overflow-y auto
+    &::-webkit-scrollbar
+      display none
   .components-list
     width 100%
     height 100%
@@ -324,6 +398,8 @@ onMounted(async () => {
             margin-top 4px
             font-size 10px
   .right
+    flex 1
+    padding 0 16px
     .tab-content
       height calc(100vh - 265px)
   .view-list

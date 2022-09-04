@@ -6,8 +6,8 @@
         <Form.Item label="页面名称" name="name">
           <Input v-model:value="filterState.name" />
         </Form.Item>
-        <Form.Item label="页面key" name="key">
-          <Input v-model:value="filterState.key" />
+        <Form.Item label="英文名" name="type">
+          <Input v-model:value="filterState.type" />
         </Form.Item>
         <Form.Item>
           <Button type="primary" @click="onSearch">搜索</Button>
@@ -49,7 +49,7 @@ const indexSetting = ref({
 })
 
 const onSearch = () => {
-  filteredData.value = dataSource.value.filter(d => d.name.indexOf(filterState.name) > -1 && d.key.indexOf(filterState.key)  -1)
+  filteredData.value = dataSource.value.filter(d => d.name.indexOf(filterState.name) > -1 && d.type.indexOf(filterState.type)  -1)
 }
 const onReset = () => {
   filterState.name = ''
@@ -92,7 +92,7 @@ const onIndex = async (pageid) => {
 }
 const filterState = reactive({
   name: '',
-  key: ''
+  type: ''
 })
 
 const columns = ref([
@@ -108,9 +108,9 @@ const columns = ref([
     key: 'name',
   },
   {
-    title: 'key',
-    dataIndex: 'key',
-    key: 'key',
+    title: '英文名',
+    dataIndex: 'type',
+    key: 'type',
   },
   {
     title: '创建时间',

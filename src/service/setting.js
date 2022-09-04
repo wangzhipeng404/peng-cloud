@@ -1,7 +1,7 @@
 import { db } from './db'
 
 export async function saveSetting(settingObj) {
-  const count = await db.settings.where('key').equalsIgnoreCase(settingObj.key).count()
+  const count = await db.settings.where('type').equalsIgnoreCase(settingObj.type).count()
   if (!settingObj.id && count > 0) {
       throw 'key已存在，请修改'
   }
@@ -15,7 +15,7 @@ export async function saveSetting(settingObj) {
   return id
 }
 
-export async function getSetting (key) {
-  const setting =  await db.settings.get({ key })
+export async function getSetting (type) {
+  const setting =  await db.settings.get({ type })
   return setting
 }

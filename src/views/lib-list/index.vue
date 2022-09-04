@@ -82,9 +82,9 @@ const columns = ref([
     key: 'name',
   },
   {
-    title: 'key',
-    dataIndex: 'key',
-    key: 'key',
+    title: '英文名',
+    dataIndex: 'type',
+    key: 'type',
   },
   {
     title: '创建时间',

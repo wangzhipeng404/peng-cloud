@@ -26,12 +26,12 @@ const fromRef = ref(null)
 const formState = reactive({
   id: +route.params.id,
   name: '',
-  key: '',
+  type: '',
   code: '',
 })
 const formRule = reactive({
-  name: [{ required: true, message: '请输入组件名称' }],
-  key: [{ required: true, message: '请输入组件key' }],
+  name: [{ required: true, message: '中文名' }],
+  type: [{ required: true, message: '英文名' }],
   code: [{ required: true, message: '请输入代码' }],
 })
 const extensions = [
@@ -52,9 +52,8 @@ const onSubmit = async () => {
     return
   }
   const result = {
-    type: '2',
     name: formState.name,
-    key: formState.key,
+    type: formState.type,
     code: formState.code,
   }
   if (formState.id) {
@@ -91,8 +90,8 @@ const content = () => (
       <Form.Item label="库名称" name="name">
         <Input v-model:value={formState.name} />
       </Form.Item>
-      <Form.Item label="库key" name="key">
-        <Input v-model:value={formState.key} disabled={!!formState.id} />
+      <Form.Item label="英文名" name="type">
+        <Input v-model:value={formState.type} disabled={!!formState.id} />
       </Form.Item>
       <Form.Item>
         <Upload
@@ -120,7 +119,7 @@ onMounted(() => {
     getLib(route.params.id).then(res => {
       if (res) {
         formState.name = res.name
-        formState.key = res.key
+        formState.type = res.type
         formState.code = res.code
       }
     })
