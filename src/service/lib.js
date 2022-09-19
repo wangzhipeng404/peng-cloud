@@ -1,35 +1,39 @@
-import { db } from './db'
+import { getOSSFile, put } from '../utils/oss'
+import { addRecord, countRecord, deleteRecord, getRecord, listRecord, updateRecord } from './record'
+
+const category = 3
 
 export async function saveLib(libObj) {
-    const count = await db.libs.where('type').equalsIgnoreCase(libObj.type).count()
-    if (!libObj.id && count > 0) {
-        throw 'key已存在，请修改'
-    }
-    const newData = { 
-        ...libObj,
-        createTime: libObj.createTime || new Date().getTime(),
-        updateTime: new Date().getTime()
-    }
-    console.log(libObj)
-    const id = await db.libs.put(newData, newData.id)
+  const { code, ...lib } = libObj
+  await put(
+    `/test/libs/${lib.type}.js`,
+    new Blob([code], { type: 'text/javascript' })
+  )
+  if (lib.id) {
+    await updateRecord({ ...lib, category })
+    return lib.id
+  } else {
+    const id = await addRecord({...lib, category})
     return id
+  }
 }
 
-export async function findLibs () {
-    const list = await db.libs.reverse().sortBy('updateTime')
-    return list
+export async function findLibs() {
+  const { list } = await listRecord(category)
+  return list
 }
-export async function getLib (key) {
-    const lib =  await db.libs.get(+key)
-    console.log(lib)
-    return lib
+export async function getLib(id) {
+  const lib = await getRecord(id)
+  const code = await getOSSFile(`/test/libs/${lib.type}.js`)
+  console.log(lib)
+  return { ...lib, code }
 }
 
-export async function deleteLib (key) {
-    await db.libs.delete(key)
+export async function deleteLib(id) {
+  await deleteRecord(id)
 }
 
 export async function countLib() {
-    const count = await db.libs.count()
-    return count
+  const { totalCount } = await countRecord(category)
+  return totalCount
 }

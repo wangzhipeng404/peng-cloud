@@ -6,8 +6,8 @@
         <Form.Item label="库名称" name="name">
           <Input v-model:value="filterState.name" />
         </Form.Item>
-        <Form.Item label="库key" name="key">
-          <Input v-model:value="filterState.key" />
+        <Form.Item label="英文名" name="type">
+          <Input v-model:value="filterState.type" />
         </Form.Item>
         <Form.Item>
           <Button type="primary" @click="onSearch">搜索</Button>
@@ -42,24 +42,24 @@ const router = useRouter()
 const dataSource = ref([])
 const filteredData = ref(dataSource.value)
 const onSearch = () => {
-  filteredData.value = dataSource.value.filter(d => d.name.indexOf(filterState.name) > -1 && d.key.indexOf(filterState.key)  -1)
+  filteredData.value = dataSource.value.filter(d => d.name.indexOf(filterState.name) > -1 && d.type.indexOf(filterState.type)  -1)
 }
 const onReset = () => {
   filterState.name = ''
-  filterState.key = ''
+  filterState.type = ''
   filteredData.value = dataSource.value
 }
 
 const getData = async () => {
   const res = await findLibs()
   dataSource.value = res.map(com => {
-      return {
-        ...com,
-        createTime: dayjs(+com.createTime).format('YYYY-MM-DD HH:mm:ss'),
-        updateTime: dayjs(+com.updateTime).format('YYYY-MM-DD HH:mm:ss'),
-      }
-    })
-    onSearch()
+    return {
+      ...com,
+      createTime: dayjs(+com.createTime).format('YYYY-MM-DD HH:mm:ss'),
+      updateTime: dayjs(+com.updateTime).format('YYYY-MM-DD HH:mm:ss'),
+    }
+  })
+  onSearch()
 }
 const onAdd = () => router.push({ name: 'libEditor' })
 const onDelete = async (id) => {

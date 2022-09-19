@@ -5,6 +5,15 @@ const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 module.exports = defineConfig({
   publicPath: './',
   transpileDependencies: true,
+  devServer: {
+    proxy: {
+      '/p-cloud': {
+        target: 'http://43.142.95.160:28019',
+        ws: true,
+        changeOrigin: true
+      }
+    }
+  },
   css: {
     loaderOptions: {
       less: {

@@ -37,7 +37,7 @@ async function initWeb () {
     {default: router},
     {default: App},
     { findComponents },
-    { createComponent },
+    { createOSSFileComponent },
     { default: magicUI }
   ] = imports
   const app = createApp(App)
@@ -51,7 +51,7 @@ async function initWeb () {
   app.use(MagicForm)
   const res = await findComponents()
   res.map(item => {
-    app.component(item.type, defineAsyncComponent(() => createComponent(item.script, item.type)))
+    app.component(item.type, defineAsyncComponent(() => createOSSFileComponent(item.type)))
   })
   Object.keys(magicUI).map(k => {
     app.component(k, magicUI[k])

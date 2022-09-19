@@ -1,7 +1,9 @@
 export const tp0 = `
 <template>
-  <div class="blue">{{date}}</div>
-  <div>{{msg}}</div>
+  <div>
+    <div class="blue">{{date}}</div>
+    <div>{{msg}}</div>
+  </div>
 </template>
 <script setup>
   import { ref } from 'vue'

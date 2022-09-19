@@ -2,7 +2,8 @@
 <template>
   <component 
     :is="componentsMap.has(item.type) ? componentsMap.get(item.type) : item.type"
-    v-bind="item"
+    v-bind="bindProps"
+    :style="style"
     :class="{ 
       active: currentItem && item.id == currentItem.id,
       'min-height': item.childNames && item.childNames.length > 0
@@ -31,10 +32,11 @@
   </component>
 </template>
 <script setup>
-import { defineProps, inject } from 'vue'
+import { defineProps, inject, computed } from 'vue'
 import draggable from "vuedraggable";
+import { transformStyle } from '@/utils/style'
 const { item: currentItem, selectItem } = inject('current')
-defineProps({
+const props = defineProps({
   itemKey: {
     type: String,
     default: 'id',
@@ -53,6 +55,14 @@ defineProps({
   }
 })
 
+const style = computed(() => {
+  return transformStyle(props.item.style)
+})
+
+const bindProps = computed(() => {
+  const { style, type, ...others } = props.item
+  return others
+})
 
 const log = (evt) => {
   console.log(evt)
