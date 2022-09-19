@@ -1,5 +1,7 @@
 import { findLibs } from '../service/lib'
 
+export const endPoint = 'https://p-cloud.oss-cn-hangzhou.aliyuncs.com'
+
 export const defaultLibs = [
   {
     type: '1',
@@ -22,9 +24,7 @@ export function initImportMap() {
         if (lib.path) {
           imports[lib.key] = lib.path
         } else {
-          const blob = new Blob([lib.code], { type: 'text/javascript' });
-          const blobURL = URL.createObjectURL(blob);
-          imports[lib.key] = blobURL
+          imports[lib.type] = `${endPoint}/test/libs/${lib.type}.js`
         }
       })
       const mapEl = document.createElement('script');

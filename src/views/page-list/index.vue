@@ -36,7 +36,7 @@ import { useRouter } from 'vue-router'
 import { PageContainer } from '@ant-design-vue/pro-layout'
 import { Table, Form, Input, Button, Divider, Popconfirm, message } from 'ant-design-vue'
 import { findPages, deletePage } from '../../service/page'
-import { saveSetting, getSetting } from '@/service/setting'
+import { updateSetting, getSetting } from '@/service/setting'
 import dayjs from 'dayjs'
 import { HomeTwoTone } from '@ant-design/icons-vue'
 
@@ -81,7 +81,7 @@ const onDelete = async (id) => {
 const onIndex = async (pageid) => {
   try {
     indexSetting.value.value = pageid
-    const id = await saveSetting({ ...indexSetting.value })
+    const id = await updateSetting('index', pageid)
     indexSetting.value.id = id
   } catch (e) {
     console.error(e)

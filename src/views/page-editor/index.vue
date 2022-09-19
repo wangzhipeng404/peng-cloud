@@ -93,7 +93,7 @@
 
 <script setup>
 import { PageContainer } from '@ant-design-vue/pro-layout';
-import { onMounted, ref, reactive, toRaw, provide, watchEffect, computed } from 'vue';
+import { onMounted, ref, reactive, toRaw, provide, watchEffect, computed, defineAsyncComponent, h } from 'vue';
 import { List, Form, message, Button, Input, Tabs } from 'ant-design-vue';
 import { DeleteOutlined } from '@ant-design/icons-vue';
 import draggable from 'vuedraggable'
@@ -101,8 +101,8 @@ import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { keymap } from "@codemirror/view"
-import { findComponents } from '../../service/compoment'
-import { createComponent } from '@/utils/component';
+import { findComponents, getComponet } from '../../service/compoment'
+import { createOSSFileComponent } from '@/utils/component';
 import { getPage, savePage } from '@/service/page';
 import { useRoute } from 'vue-router';
 import Nested from './Nested.vue'
@@ -258,7 +258,7 @@ const onSubmit = async () => {
   } catch (e) {
     console.log('出错了')
     console.error(e)
-    message.error({ content: e })
+    message.error({ content: e, duration: 3 })
     return
   }
   message.success({ content: '保存成功', duration: 3 })
@@ -281,40 +281,38 @@ const content = () => (
 
 onMounted(async () => {
   const res = await findComponents()
-  await Promise.all(res.map(item => {
-    return createComponent(item.script, item.type).then(res => {
-      console.log(res)
-      componentsMap.set(item.type, res)
-    })
+  const list = await Promise.all(res.map(item => {
+    return getComponet(item.id)
   }))
+  res.forEach(item => {
+      componentsMap.set(item.type, defineAsyncComponent({
+        // 加载函数
+        loader: () => createOSSFileComponent(item.type),
+        loadingComponent: { render () { h('div', '正在加载') } },
+        delay: 200,
+        errorComponent:  { render () { h('div', '加载失败') } },
+        timeout: 3000
+      }))
+  })
   componentList.value = [
     ...componentList.value, 
-    ...res.map(item => {
+    ...list.map(item => {
       // eslint-disable-next-line no-unused-vars
-      const { script, code, propsConfigs, initValues, eventConfigs, createTime, updateTime, type, ...others } = item
+      const { script, code, props, events, create_time, update_time, type, ...others } = item
       let itemProps = {}
-      try {
-        itemProps = JSON.parse(initValues)
-      } catch (e) {
-        console.log('解析initValue出错')
-        console.log(e)
-      }
-      let config = []
-      try {
-        config = JSON.parse(propsConfigs)
-      } catch (e) {
-        console.log('解析propsConfigs出错')
-        console.log(e)
-      }
-      propsConfig.value[type] = config
+      propsConfig.value[type] = props
+      props.map(p => {
+          itemProps[p.name] = p.value
+        })
       return {
         ...others,
         ...itemProps,
         type,
         style: { flex: 1 }
       }
-    }
-  )]
+    })
+  ]
+  console.log('components', componentList.value)
   console.log('propsConfig', propsConfig.value)
   if (route.params.id) {
     console.log(route.params.id)
@@ -322,7 +320,7 @@ onMounted(async () => {
       if (res) {
         formState.name = res.name
         formState.type = res.type
-        viewList.value = JSON.parse(res.protocl).items
+        viewList.value = res.protocl.items
       }
     })
   }

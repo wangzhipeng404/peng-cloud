@@ -1,3 +1,4 @@
+import { endPoint, getOSSFile } from "./oss";
 
 const registedMap = new Map()
 
@@ -20,9 +21,24 @@ export function createFile(jsCode, id) {
   })
 }
 
+export async function createOSSComponent(type) {
+  const src = `${endPoint}/test/components/${type}/${type}.js`
+  return createComponent(src, type)
+}
+
+export async function createOSSFileComponent(type) {
+  const script = await getOSSFile(`test/components/${type}/${type}.js`)
+  return createComponent(script, type)
+}
+
 export async function createComponent(str, id = 'test-component') {
   if (registedMap.has(id)) {
     return registedMap.get(id)
+  }
+  if (/^[http|https]/.test(str)) {
+    const comp = () => import(str)
+    registedMap.set(id, comp)
+    return comp
   }
   const res = await createFile(str, id)
   if (id !== 'test-component') {

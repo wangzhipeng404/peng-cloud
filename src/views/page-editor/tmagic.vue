@@ -164,16 +164,13 @@ onMounted(async () => {
       // eslint-disable-next-line no-unused-vars
       const { script, code, propsConfigs: configs, initValues, eventConfigs, createTime, updateTime, type, ...others } = c
       let initVal = {}
-      try {
-        initVal = JSON.parse(initValues)
-      } catch (e) {
-        console.log('解析initValue出错')
-        console.log(e)
-      }
       propsService.setPropsValues(c.type, initVal)
       let config = []
       try {
         config = JSON.parse(configs)
+        config.map(p => {
+          initVal[p.name] = p.value
+        })
       } catch (e) {
         console.log('解析propsConfigs出错')
         console.log(e)

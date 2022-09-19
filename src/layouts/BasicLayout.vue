@@ -15,7 +15,7 @@
     <template #menuHeaderRender>
       <router-link :to="{ path: '/' }">
         <img src="~@/assets/logo.svg" />
-        <h1>Peng Cloud</h1>
+        <h1>P Cloud</h1>
       </router-link>
     </template>
     <template #rightContentRender>

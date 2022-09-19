@@ -6,6 +6,15 @@ module.exports = defineConfig({
   publicPath: './',
   transpileDependencies: true,
   productionSourceMap: false,
+  devServer: {
+    proxy: {
+      '/p-cloud': {
+        target: 'http://43.142.95.160:28019',
+        ws: true,
+        changeOrigin: true
+      }
+    }
+  },
   css: {
     sourceMap: false,
     loaderOptions: {

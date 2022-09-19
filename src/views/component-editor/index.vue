@@ -1,126 +1,184 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <PageContainer
-    :content="content"
-    
-  >
-    <Tabs 
-      tabPosition="left"
-      style="background: #ffffff;"
-      size="small"
+  <Spin :spinning="loading">
+    <PageContainer
+      :content="content"
     >
-      <TabPane key="10" tab="组件代码">
-        <div class="container">
-          <div class="editor-wrap">
-            <codemirror
-              v-model="formState.code"
-              placeholder="Code goes here..."
-              :style="{ height: 'calc(100vh - 200px)' }"
-              :autofocus="true"
-              :indent-with-tab="true"
-              :tab-size="2"
-              :extensions="extensions"
-            />
+      <Tabs 
+        tabPosition="left"
+        style="background: #ffffff;"
+        size="small"
+      >
+        <TabPane key="10" tab="组件代码">
+          <div class="container">
+            <div class="editor-wrap">
+              <codemirror
+                v-model="formState.code"
+                placeholder="Code goes here..."
+                :style="{ height: 'calc(100vh - 200px)' }"
+                :autofocus="true"
+                :indent-with-tab="true"
+                :tab-size="2"
+                :extensions="extensions"
+                :modes="modes"
+              />
+            </div>
+            <div class="preview-container">
+              <Tabs centered>
+                <TabPane key="1" tab="预览">
+                  <div class="preview-wrap">
+                    <iframe
+                      :src="iframeSrc"
+                      frameborder="0"
+                      style="height: 100%;width: 100%;"
+                      id="preview-iframe"
+                      sandbox="allow-same-origin allow-forms allow-scripts allow-top-navigation-to-custom-protocols allow-top-navigation-by-user-activation allow-top-navigation"
+                    />
+                  </div>
+                </TabPane>
+                <TabPane key="2" tab="编译结果">
+                  <div class="preview-wrap">
+                    <codemirror
+                      v-model="parsedCode"
+                      placeholder="Code goes here..."
+                      :style="{ height: '100%' }"
+                      :autofocus="true"
+                      :indent-with-tab="true"
+                      :tab-size="2"
+                      :extensions="extensions"
+                      disabled
+                    />
+                  </div>
+                </TabPane>
+              </Tabs>
+            </div>
           </div>
-          <div class="preview-container">
-            <Tabs centered>
-              <TabPane key="1" tab="预览">
-                <div class="preview-wrap">
-                  <iframe
-                    :src="iframeSrc"
-                    frameborder="0"
-                    style="height: 100%;width: 100%;"
-                    id="preview-iframe"
-                    sandbox="allow-same-origin allow-forms allow-scripts allow-top-navigation-to-custom-protocols allow-top-navigation-by-user-activation allow-top-navigation"
-                  />
+        </TabPane>
+        <TabPane key="30" tab="属性配置">
+          <Tabs>
+            <TabPane key="301" tab="属性配置">
+                <div class="container">
+                  <div :style="{ height: 'calc(100vh - 300px)' }">
+                    <Space 
+                      style="display: flex; margin-bottom: 16px"
+                    >
+                      <div class="field">属性标签</div>
+                      <div class="field">配置类型</div>
+                      <div class="field">属性name</div>
+                      <div class="field">默认值</div>
+                    </Space>
+                    <Form
+                      ref="propsFormRef"
+                      name="props-form"
+                      :model="propsModel"
+                    >
+                      <Space
+                        v-for="(prop, index) in propsModel.props"
+                        :key="prop.key"
+                        style="display: flex;"
+                        align="baseline"
+                      >
+                        <Form.Item
+                          :name="['props', index, 'text']"
+                          :rules="{
+                            required: true,
+                            message: '属性标签',
+                          }"
+                        >
+                          <Input v-model:value="prop.text" placeholder="属性标签" class="field" />
+                        </Form.Item>
+                        <Form.Item
+                          :name="['props', index, 'type']"
+                          :rules="{
+                            required: true,
+                            message: '配置类型',
+                          }"
+                        >
+                          <Select v-model:value="prop.type" placeholder="配置类型" class="field">
+                            <Option value="input">文本</Option>
+                            <Option value="select">选项</Option>
+                            <Option value="number">数字</Option>
+                          </Select>
+                        </Form.Item>
+                        <Form.Item
+                          :name="['props', index, 'name']"
+                          :rules="{
+                            required: true,
+                            message: '属性name',
+                          }"
+                        >
+                          <Input v-model:value="prop.name" placeholder="属性name" class="field" />
+                        </Form.Item>
+                        <Form.Item
+                          :name="['props', index, 'value']"
+                          :rules="{
+                            required: false,
+                            message: '默认值',
+                          }"
+                        >
+                          <Input v-model:value="prop.value" placeholder="默认值" class="field" />
+                        </Form.Item>
+                        <MinusCircleOutlined @click="removeProp(index)" />
+                      </Space>
+                      <Form.Item>
+                        <Button type="dashed" block @click="addProp">
+                          <PlusOutlined />
+                          添加属性
+                        </Button>
+                      </Form.Item>
+                    </Form>
+                  </div>
                 </div>
-              </TabPane>
-              <TabPane key="2" tab="编译结果">
-                <div class="preview-wrap">
+            </TabPane>
+            <TabPane key="302" tab="JSON">
+              <div class="container">
+                <div class="editor-wrap">
                   <codemirror
-                    v-model="parsedCode"
+                    readOnly
+                    v-model="propsConfig"
                     placeholder="Code goes here..."
-                    :style="{ height: '100%' }"
+                    :style="{ height: 'calc(100vh - 300px)' }"
                     :autofocus="true"
                     :indent-with-tab="true"
                     :tab-size="2"
                     :extensions="extensions"
-                    disabled
+                    mode="application/json"
+                    :lint="true"
+                    :gutters="['CodeMirror-lint-markers']"
                   />
                 </div>
-              </TabPane>
-            </Tabs>
+              </div>
+            </TabPane>
+          </Tabs>
+        </TabPane>
+        <TabPane key="40" tab="事件配置">
+          <div class="container">
+            <div class="editor-wrap">
+              <codemirror
+                v-model="formState.evnets"
+                placeholder="Code goes here..."
+                :style="{ height: 'calc(100vh - 200px)' }"
+                :autofocus="true"
+                :indent-with-tab="true"
+                :tab-size="2"
+                :extensions="extensions"
+                mode="application/json"
+                :lint="true"
+                :gutters="['CodeMirror-lint-markers']"
+              />
+            </div>
           </div>
-        </div>
-      </TabPane>
-      <TabPane key="30" tab="初始值配置">
-        <div class="container">
-          <div class="editor-wrap">
-            <codemirror
-              v-model="formState.initValues"
-              placeholder="Code goes here..."
-              :style="{ height: 'calc(100vh - 200px)' }"
-              :autofocus="true"
-              :indent-with-tab="true"
-              :tab-size="2"
-              :extensions="extensions"
-              mode="application/json"
-              :lint="true"
-              :gutters="['CodeMirror-lint-markers']"
-            />
-          </div>
-        </div>
-      </TabPane>
-      <TabPane key="20" tab="属性配置">
-        <div class="container">
-          <div class="editor-wrap">
-            <codemirror
-              v-model="formState.propsConfigs"
-              placeholder="Code goes here..."
-              :style="{ height: 'calc(100vh - 200px)' }"
-              :autofocus="true"
-              :indent-with-tab="true"
-              :tab-size="2"
-              mode="application/json"
-              :lint="true"
-              :gutters="['CodeMirror-lint-markers']"
-              :extensions="extensions"
-            />
-          </div>
-        </div>
-      </TabPane>
-      <TabPane key="40" tab="事件配置">
-        <div class="container">
-          <div class="editor-wrap">
-            <codemirror
-              v-model="formState.eventConfigs"
-              placeholder="Code goes here..."
-              :style="{ height: 'calc(100vh - 200px)' }"
-              :autofocus="true"
-              :indent-with-tab="true"
-              :tab-size="2"
-              :extensions="extensions"
-              mode="application/json"
-              :lint="true"
-              :gutters="['CodeMirror-lint-markers']"
-            />
-          </div>
-        </div>
-      </TabPane>
-    </Tabs>
-    <Drawer
-      v-model:visible="visible"
-      title="属性定义"
-      placement="right"
-    >
-      <p>todo</p>
-    </Drawer>
-  </PageContainer>
+        </TabPane>
+      </Tabs>
+    </PageContainer>
+  </Spin>
 </template>
 
-<script>
-  import { onMounted, reactive, ref } from 'vue'
+<script setup>
+  import { onMounted, reactive, ref, watchEffect } from 'vue'
   import { useRoute } from 'vue-router'
-  import { Button, Form, Input, message, Drawer, Tabs } from 'ant-design-vue'
+  import { Button, Form, Input, message, Tabs, Select, Space, Spin } from 'ant-design-vue'
+  import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons-vue'
   import { PageContainer } from '@ant-design-vue/pro-layout'
   import { Codemirror } from 'vue-codemirror'
   import { javascript } from '@codemirror/lang-javascript'
@@ -130,174 +188,196 @@
   import { parser } from '../../utils/parser'
   import { tp0 } from './testSFC'
   import { saveComponent, getComponet } from '../../service/compoment'
-  export default {
-    name: 'x-editor',
-    components: {
-      Codemirror,
-      Drawer,
-      Tabs,
-      TabPane: Tabs.TabPane,
-      PageContainer
-    },
-    setup() {
-      const route = useRoute()
-      const fromRef = ref(null)
-      const formState = reactive({
-        id: +route.params.id,
-        name: '',
-        type: '',
-        code: tp0,
-        propsConfigs: JSON.stringify([{}], null, 2),
-        initValues: JSON.stringify({}, null, 2),
-        eventConfigs:JSON.stringify([{}], null, 2)
-      })
-      const formRule = reactive({
-        name: [{ required: true, message: '请输入组件名称' }],
-        type: [{ required: true, message: '请输入组件key' }],
-        code: [{ required: true, message: '请输入代码' }],
-      })
-      const iframeSrc = ref(`${location.origin}${location.pathname}#/preview`)
-      const iframeRef = ref('')
-      const visible = ref(false)
-      const parsedCode = ref('')
-      // const previewWindow = ref('')
-      const onPreview = async () => {
-        try {
-          const { minify, raw } = await parser(formState.code)
-          parsedCode.value = raw
-          // previewWindow.value.postMessage({ type: 'editore2preview', data: res }, '*')
-          iframeRef.value.contentWindow.postMessage({ 
-            type: 'editore2preview',
-            data: {
-             script: minify,
-             props: formState.initValues
-            }
-          }, '*')
-        } catch(e) {
-          console.log(e)
+  const { TabPane } = Tabs
+  const { Option } = Select
+  const loading = ref(false)
+  const route = useRoute()
+  const fromRef = ref(null)
+  const propsFormRef = ref(null)
+  const propsModel = reactive({
+    props: []
+  })
+  const propsConfig = ref(JSON.stringify([], null, 2))
+  const formState = reactive({
+    id: +route.params.id,
+    name: '',
+    type: '',
+    code: tp0,
+    evnets:JSON.stringify([{}], null, 2)
+  })
+  const formRule = reactive({
+    name: [{ required: true, message: '请输入组件名称' }],
+    type: [{ required: true, message: '请输入组件key' }],
+    code: [{ required: true, message: '请输入代码' }],
+  })
+  const iframeSrc = ref(`${location.origin}${location.pathname}#/preview`)
+  const iframeRef = ref('')
+  const parsedCode = ref('')
+  // const previewWindow = ref('')
+  const addProp = () => {
+    propsModel.props.push({
+      key: new Date().getTime().toString(),
+      type: 'input',
+      text: '',
+      name: '',
+      value: ''
+    })
+  }
+  const removeProp = (index) => {
+    propsModel.props.splice(index, 1)
+  }
+  watchEffect(() => {
+    propsConfig.value = JSON.stringify(propsModel.props, null, 2)
+  })
+  const onPreview = async () => {
+    try {
+      const { minify, raw } = await parser(formState.code)
+      parsedCode.value = raw
+      // previewWindow.value.postMessage({ type: 'editore2preview', data: res }, '*')
+      iframeRef.value.contentWindow.postMessage({ 
+        type: 'editore2preview',
+        data: {
+          script: minify,
+          props: formState.initValues
         }
-      }
-      const extensions = [
-        javascript(), 
-        oneDark,
-        keymap.of([{
-          key: "Ctrl-s",
-          run() { 
-            onPreview()
-            return true
-          }
-        }])
-      ]
-      const jsonExtensions = [
-        json(),
-        oneDark,
-      ]
-      const onMessage = (e) => {
-      const { data: { type, key } } = e
-      if (type == 'preview2editor') {
-        console.log(type, key)
-        if (key === 'mounted') {
-          if (iframeRef.value) {
-            onPreview()
-          }
-        }
-      }
+      }, '*')
+    } catch(e) {
+      console.log(e)
     }
-      onMounted(() => {
-        window.addEventListener('message', onMessage)
-        // if (!previewWindow.value) {
-        //   previewWindow.value = window.open('http://localhost:8082/')
-        // }
-        iframeRef.value = document.getElementById('preview-iframe')
-        iframeRef.value.onload = function () {
-          onPreview()
-        }
-      })
-      const onSubmit = async () => {
-        await fromRef.value.validate()
-        if (!formState.code) {
-          message.error({ content: '请输入组件代码', duration: 3 })
-          return
-        }
-        let parseRes = ''
-        try {
-          const { minify } = await parser(formState.code)
-          parseRes = minify
-        } catch (e) {
-          console.error(e)
-          message.error({ content:  '编译出错啦，请预览成功再保存', duration: 3 })
-          return
-        }
-        const result = {
-          name: formState.name,
-          type: formState.type,
-          code: formState.code,
-          script: parseRes,
-          propsConfigs: formState.propsConfigs,
-          initValues: formState.initValues,
-          eventConfigs: formState.eventConfigs
-        }
-        if (formState.id) {
-          result.id = +formState.id
-        }
-        try {
-          console.log('before save')
-          const id = await saveComponent(result)
-          formState.id = id
-        } catch (e) {
-          console.error(e)
-          message.error({ content: e })
-          return
-        }
-        message.success({ content: '保存成功', duration: 3 })
+  }
+  const modes = [
+    {
+      value: 'css',
+      label: 'CSS'
+    },
+    {
+      value: 'javascript',
+      label: 'Javascript'
+    },
+    {
+      value: 'html',
+      label: 'XML/HTML'
+    }
+  ]
+  const extensions = [
+    javascript(), 
+    json(),
+    oneDark,
+    keymap.of([{
+      key: "Ctrl-s",
+      run() { 
+        onPreview()
+        return true
       }
-      const content = () => (
-        <>
-          <Form layout="inline" rules={formRule} ref={fromRef} model={formState} hideRequiredMark >
-            <Form.Item label="中文名称" name="name">
-              <Input v-model:value={formState.name} />
-            </Form.Item>
-            <Form.Item label="英文名称" name="type">
-              <Input v-model:value={formState.type} disabled={!!formState.id}/>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" ghost onClick={() => visible.value = true}>属性定义</Button>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" onClick={onSubmit}>保存</Button>
-            </Form.Item>
-          </Form>
-        </>
-      )
-
-      onMounted(() => {
-        if (route.params.id) {
-          console.log(route.params.id)
-          getComponet(route.params.id).then(res => {
-            if (res) {
-              formState.name = res.name
-              formState.type = res.type
-              formState.code = res.code
-              formState.propsConfigs = JSON.stringify(res.propsConfigs ? JSON.parse(res.propsConfigs) : [{}], null, 2)
-              formState.initValues = JSON.stringify(res.initValues ? JSON.parse(res.initValues) : {}, null, 2)
-              formState.eventConfigs = JSON.stringify(res.eventConfigs ? JSON.parse(res.eventConfigs) : [{}], null, 2)
-            }
-          })
-        }
-      })
-      return {
-        formState,
-        extensions,
-        jsonExtensions,
-        iframeRef,
-        onPreview,
-        content,
-        visible,
-        iframeSrc,
-        parsedCode
+    }])
+  ]
+  const onMessage = (e) => {
+  const { data: { type, key } } = e
+  if (type == 'preview2editor') {
+    console.log(type, key)
+    if (key === 'mounted') {
+      if (iframeRef.value) {
+        onPreview()
       }
     }
   }
+}
+  onMounted(() => {
+    window.addEventListener('message', onMessage)
+    // if (!previewWindow.value) {
+    //   previewWindow.value = window.open('http://localhost:8082/')
+    // }
+    iframeRef.value = document.getElementById('preview-iframe')
+    iframeRef.value.onload = function () {
+      onPreview()
+    }
+  })
+  const onSubmit = async () => {
+    await fromRef.value.validate()
+    if (!formState.code) {
+      message.error({ content: '请输入组件代码', duration: 3 })
+      return
+    }
+    if (propsModel.props.length > 0 && propsFormRef.value) {
+      try {
+        await propsFormRef.value.validate()
+      } catch (e) {
+        console.error(e)
+        message.error({ content:  '请完善属性配置项', duration: 3 })
+        return
+      }
+      if (propsModel.props.length !== [...new Set(propsModel.props.map(p => p.name))].length) {
+        message.error({ content:  '存在相同的属性名', duration: 3 })
+        return
+      }
+    }
+    let parseRes = ''
+    try {
+      const { minify } = await parser(formState.code)
+      parseRes = minify
+    } catch (e) {
+      console.error(e)
+      message.error({ content:  '编译出错啦，请预览成功再保存', duration: 3 })
+      return
+    }
+    const result = {
+      name: formState.name,
+      type: formState.type,
+      code: formState.code,
+      script: parseRes,
+      props: propsConfig.value,
+      evnets: formState.evnets
+    }
+    if (formState.id) {
+      result.id = +formState.id
+    }
+    loading.value = true
+    try {
+      console.log('before save')
+      const id = await saveComponent(result)
+      formState.id = id
+      loading.value = false
+    } catch (e) {
+      console.error(e)
+      message.error({ content: e })
+      loading.value = false
+      return
+    }
+    message.success({ content: '保存成功', duration: 3 })
+  }
+  const content = () => (
+    <>
+      <Form layout="inline" rules={formRule} ref={fromRef} model={formState} hideRequiredMark >
+        <Form.Item label="中文名称" name="name">
+          <Input v-model:value={formState.name} />
+        </Form.Item>
+        <Form.Item label="英文名称" name="type">
+          <Input v-model:value={formState.type} disabled={!!formState.id}/>
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" onClick={onSubmit}>保存</Button>
+        </Form.Item>
+      </Form>
+    </>
+  )
+
+  onMounted(() => {
+    if (route.params.id) {
+      console.log(route.params.id)
+      loading.value = true
+      getComponet(route.params.id).then(res => {
+        if (res) {
+          formState.name = res.name
+          formState.type = res.type
+          formState.code = res.code
+          propsModel.props = res.props || []
+          formState.evnets = JSON.stringify(res.events || [{}], null, 2)
+        }
+      }).finaly(() => {
+        loading.value = false
+      })
+    }
+  })
 </script>
 
 <style lang="stylus" scoped>
@@ -326,4 +406,6 @@
       width 0
     #preview-iframe body::-webkit-scrollbar
       width 0
+.field
+  width 150px
 </style>
