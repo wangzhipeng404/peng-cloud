@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <Spin :spining="loading">
+  <Spin :spinning="loading">
     <PageContainer :content="content">
       <div class="container">
         <div class="editor-wrap">

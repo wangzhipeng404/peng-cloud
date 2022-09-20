@@ -5,7 +5,7 @@ async function initMobile () {
   const { initImportMap } = await import('./utils/importmap')
   await initImportMap()
   const { createApp, defineAsyncComponent } = await import('vue')
-  const imports = Promise.all([
+  const imports = await Promise.all([
     import('@tmagic/core'),
     import('@tmagic/utils'),
     import('vant'),
@@ -14,13 +14,14 @@ async function initMobile () {
     import('./utils/component'),
     import('./AppMobile.vue'),
   ])
+
   const [
     { default: Core },
     { getUrlParam }, 
    { default: vant },
    { default: router },
    { findComponents },
-   { createComponent },
+   { createOSSFileComponent },
    { default: App }
   ] = imports
   const getLocalConfig = () => {
@@ -38,7 +39,7 @@ async function initMobile () {
   app.use(vant)
   const res = await findComponents()
   res.map(item => {
-    app.component(item.type, defineAsyncComponent(() => createComponent(item.script, item.type)))
+    app.component(item.type, defineAsyncComponent(() => createOSSFileComponent(item.type)))
   })
   const core = new Core({
     config: ((getUrlParam('localPreview') ? getLocalConfig() : window.magicDSL) || [])[0] || {},

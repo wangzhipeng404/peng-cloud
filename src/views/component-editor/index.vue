@@ -373,7 +373,8 @@
           propsModel.props = res.props || []
           formState.evnets = JSON.stringify(res.events || [{}], null, 2)
         }
-      }).finaly(() => {
+        loading.value = false
+      }).catch(() => {
         loading.value = false
       })
     }

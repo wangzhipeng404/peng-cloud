@@ -1,100 +1,102 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <PageContainer :content="content">
-    <div class="container">
-      <div class="left">
-        <div class="top">
-          <List class="components-list">
-            <draggable :list="componentList" :sort="false" :group="{ name: 'people', pull: 'clone', put: false }"
-              :clone="cloneComponent" @change="log" item-key="id">
-              <template #item="{ element }">
-                <List.Item class="list-item">
-                  <List.Item.Meta :title="element.name" :description="element.key"></List.Item.Meta>
-                </List.Item>
+  <Spin :spinning="loading">
+    <PageContainer :content="content">
+      <div class="container">
+        <div class="left">
+          <div class="top">
+            <List class="components-list">
+              <draggable :list="componentList" :sort="false" :group="{ name: 'people', pull: 'clone', put: false }"
+                :clone="cloneComponent" @change="log" item-key="id">
+                <template #item="{ element }">
+                  <List.Item class="list-item">
+                    <List.Item.Meta :title="element.name" :description="element.key"></List.Item.Meta>
+                  </List.Item>
+                </template>
+              </draggable>
+            </List>
+          </div>
+          <div class="bottom">
+            <div class="delete-wrap">
+              <div class="delete-content">
+                <DeleteOutlined fill="#ff4d4f" :style="{ opacity: 0.6 }" />
+                <div class="delete-hint">拖到此处删除</div>
+              </div>
+            </div>
+            <draggable 
+              :list="deleteList"
+              :sort="false"
+              group="people"
+              :put="false"
+              @change="log"
+              item-key="id"
+              class="delete-list"
+            >
+                <template #item>
+                  <div />
+                </template>
+            </draggable>
+          </div>
+        </div>
+        <div class="middle">
+            <draggable
+              class="dragArea view-list"
+              :list="viewList"
+              group="people"
+              item-key="id"
+              @change="log"
+            >
+              <template #item="{element}">
+                <Nested
+                  :item="element"
+                  group="people"
+                  item-key="id"
+                  :components-map="componentsMap"
+                />
               </template>
             </draggable>
-          </List>
         </div>
-        <div class="bottom">
-          <div class="delete-wrap">
-            <div class="delete-content">
-              <DeleteOutlined fill="#ff4d4f" :style="{ opacity: 0.6 }" />
-              <div class="delete-hint">拖到此处删除</div>
-            </div>
-          </div>
-          <draggable 
-            :list="deleteList"
-            :sort="false"
-            group="people"
-            :put="false"
-            @change="log"
-            item-key="id"
-            class="delete-list"
-          >
-              <template #item>
-                <div />
-              </template>
-          </draggable>
-        </div>
-      </div>
-      <div class="middle">
-          <draggable
-            class="dragArea view-list"
-            :list="viewList"
-            group="people"
-            item-key="id"
-            @change="log"
-          >
-            <template #item="{element}">
-              <Nested
-                :item="element"
-                group="people"
-                item-key="id"
-                :components-map="componentsMap"
+        <div class="right">
+          <Tabs>
+            <Tabs.TabPane key="1" tab="基本属性">
+              <PropsForm
+                :config="currentConfig"
+                v-model:value="currentItem"
+                v-if="currentItem"
+                :key="currentItem.id"
               />
-            </template>
-          </draggable>
+            </Tabs.TabPane>
+            <Tabs.TabPane key="2" tab="布局属性">
+              <StyleForm
+                v-model:value="currentItem.style"
+                v-if="currentItem"
+                :key="currentItem.id"
+              />
+            </Tabs.TabPane>
+            <Tabs.TabPane key="3" tab="Schema">
+              <div class="tab-content">
+                  <codemirror
+                    v-model="schema"
+                    placeholder="Code goes here..."
+                    :style="{ height: '100%' }"
+                    :autofocus="true"
+                    :indent-with-tab="true"
+                    :tab-size="2"
+                    :extensions="extensions"
+                  />
+              </div>
+            </Tabs.TabPane>
+          </Tabs>
+        </div>
       </div>
-      <div class="right">
-        <Tabs>
-          <Tabs.TabPane key="1" tab="基本属性">
-            <PropsForm
-              :config="currentConfig"
-              v-model:value="currentItem"
-              v-if="currentItem"
-              :key="currentItem.id"
-            />
-          </Tabs.TabPane>
-          <Tabs.TabPane key="2" tab="布局属性">
-            <StyleForm
-              v-model:value="currentItem.style"
-              v-if="currentItem"
-              :key="currentItem.id"
-            />
-          </Tabs.TabPane>
-          <Tabs.TabPane key="3" tab="Schema">
-            <div class="tab-content">
-                <codemirror
-                  v-model="schema"
-                  placeholder="Code goes here..."
-                  :style="{ height: '100%' }"
-                  :autofocus="true"
-                  :indent-with-tab="true"
-                  :tab-size="2"
-                  :extensions="extensions"
-                />
-            </div>
-          </Tabs.TabPane>
-        </Tabs>
-      </div>
-    </div>
-  </PageContainer>
+    </PageContainer>
+  </Spin>
 </template>
 
 <script setup>
 import { PageContainer } from '@ant-design-vue/pro-layout';
 import { onMounted, ref, reactive, toRaw, provide, watchEffect, computed, defineAsyncComponent, h } from 'vue';
-import { List, Form, message, Button, Input, Tabs } from 'ant-design-vue';
+import { List, Form, message, Button, Input, Tabs, Spin } from 'ant-design-vue';
 import { DeleteOutlined } from '@ant-design/icons-vue';
 import draggable from 'vuedraggable'
 import { Codemirror } from 'vue-codemirror'
@@ -111,6 +113,7 @@ import PropsForm from './PropsForm.vue'
 import StyleForm from './StyleForm.vue'
 
 const currentItem = ref(null)
+const loading = ref(false)
 const selectItem = item => {
   console.log(item)
   currentItem.value = item
@@ -250,15 +253,18 @@ const onSubmit = async () => {
   if (formState.id) {
     result.id = +formState.id
   }
+  loading.value = true
   try {
     console.log('开始保存')
     console.log(result)
     const id = await savePage(result)
     formState.id = id
+    loading.value = false
   } catch (e) {
     console.log('出错了')
     console.error(e)
     message.error({ content: e, duration: 3 })
+    loading.value = false
     return
   }
   message.success({ content: '保存成功', duration: 3 })
@@ -280,6 +286,7 @@ const content = () => (
 )
 
 onMounted(async () => {
+  loading.value = true
   const res = await findComponents()
   const list = await Promise.all(res.map(item => {
     return getComponet(item.id)
@@ -322,7 +329,12 @@ onMounted(async () => {
         formState.type = res.type
         viewList.value = res.protocl.items
       }
+      loading.value = false
+    }).catch(() => {
+      loading.value = false
     })
+  } else {
+    loading.value = false
   }
 })
 </script>
