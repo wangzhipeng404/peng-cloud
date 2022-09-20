@@ -41,12 +41,6 @@ export default createRouter({
           ]
         },
         {
-          path: '/tmagic',
-          name: 'pageTmagic',
-          meta: { title: 'TMagic', icon: 'icon-icon-test',  },
-          component: () => import(/* webpackChunkName: 'page-tmagic' */ '../views/page-editor/tmagic.vue'),
-        },
-        {
           path: '/compoents',
           name: 'compoents',
           meta: { title: '组件管理', icon: 'icon-icon-test', hideChildrenInMenu: true },
@@ -85,7 +79,13 @@ export default createRouter({
               component: () => import(/* webpackChunkName: 'page-editor' */ '../views/lib-editor/index.vue'),
             }
           ]
-        }
+        },
+        {
+          path: '/tmagic',
+          name: 'pageTmagic',
+          meta: { title: 'TMagic', icon: 'icon-icon-test',  },
+          component: () => import(/* webpackChunkName: 'page-tmagic' */ '../views/page-editor/tmagic.vue'),
+        },
       ],
     },
     {

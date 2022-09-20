@@ -2,11 +2,11 @@
   <component
     v-for="item in views"
     :key="item.id"
-    :is="item.key" 
-    v-bind="item.props"
+    :is="item.type" 
+    v-bind="item"
   >
-    <template v-if="item.children && item.children.length > 0">
-      <page-render :views="item.children" />
+    <template v-if="item.items && item.items.length > 0">
+      <page-render :views="item.items" />
     </template>
   </component>
 </template>
