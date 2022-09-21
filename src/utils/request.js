@@ -2,7 +2,7 @@ import axios from "axios";
 
 const instance = axios.create()
 
-instance.defaults.baseURL = '//43.142.95.160:28019/p-cloud/v1'
+instance.defaults.baseURL = '//43.142.95.160/p-cloud/v1'
 
 instance.interceptors.response.use(response => {
   if (response.data.resultCode === 200) {
