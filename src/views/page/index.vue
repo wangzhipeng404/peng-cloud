@@ -24,7 +24,7 @@ const notFound = async () => {
   try {
     const indexSetting = await getSetting('index')
     console.log(indexSetting)
-    if (indexSetting) {
+    if (indexSetting && indexSetting.value) {
       router.replace({
         path: `/page/${indexSetting.value}`,
       })
