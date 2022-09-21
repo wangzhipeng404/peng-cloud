@@ -81,6 +81,20 @@ export default createRouter({
           ]
         },
         {
+          name: 'assets',
+          path: '/assets',
+          meta: { title: '静态资源', icon: 'icon-icon-test', hideChildrenInMenu: true },
+          redirect: '/assets/list',
+          children: [
+            {
+              name: 'assets-list',
+              path: 'list',
+              meta: { title: '列表', icon: 'icon-icon-test' },
+              component: () => import(/* webpackChunkName: 'assets-list' */ '../views/asset-list/index.vue'),
+            },
+          ]
+        },
+        {
           path: '/tmagic',
           name: 'pageTmagic',
           meta: { title: 'TMagic', icon: 'icon-icon-test',  },

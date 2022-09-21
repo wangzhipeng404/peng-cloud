@@ -13,7 +13,7 @@ async function getSecurity () {
 }
 
 let client = null
-async function getClient () {
+export async function getClient () {
   if (client) return client
   const security = await getSecurity()
   console.log('security', security)
