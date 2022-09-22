@@ -51,6 +51,7 @@
     "terser": "^5.14.2",
     "uglify-js": "^3.17.0",
     "vant": "^3.5.2",
+    "vconsole": "^3.14.6",
     "vue": "^3.2.38",
     "vue-codemirror": "^6.0.1",
     "vue-router": "^4.1.3",

@@ -21,7 +21,7 @@ async function initMobile () {
    { default: vant },
    { default: router },
    { findComponents },
-   { createOSSFileComponent },
+   { getOSSUrl },
    { default: App }
   ] = imports
   const getLocalConfig = () => {
@@ -39,7 +39,7 @@ async function initMobile () {
   app.use(vant)
   const res = await findComponents()
   res.map(item => {
-    app.component(item.type, defineAsyncComponent(() => createOSSFileComponent(item.type)))
+    app.component(item.type, defineAsyncComponent(new Function(`return import('${getOSSUrl(item.type)}')`)))
   })
   const core = new Core({
     config: ((getUrlParam('localPreview') ? getLocalConfig() : window.magicDSL) || [])[0] || {},

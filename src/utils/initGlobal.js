@@ -1,4 +1,6 @@
 export function initGlobal () {
+  window.__VUE_OPTIONS_API__ = true
+  window.__VUE_PROD_DEVTOOLS__ = true
   window.process = {
     env: {
       NODE_ENV: 'development'

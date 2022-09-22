@@ -104,7 +104,7 @@ import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { keymap } from "@codemirror/view"
 import { findComponents, getComponet } from '../../service/compoment'
-import { createOSSFileComponent } from '@/utils/component';
+import { getOSSUrl } from '@/utils/component';
 import { getPage, savePage } from '@/service/page';
 import { useRoute } from 'vue-router';
 import Nested from './Nested.vue'
@@ -289,7 +289,7 @@ onMounted(async () => {
   res.forEach(item => {
       componentsMap.set(item.type, defineAsyncComponent({
         // 加载函数
-        loader: () => createOSSFileComponent(item.type),
+        loader: new Function(`return import('${getOSSUrl(item.type)}')`),
         loadingComponent: { render () { h('div', '正在加载') } },
         delay: 200,
         errorComponent:  { render () { h('div', '加载失败') } },
