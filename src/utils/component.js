@@ -21,9 +21,12 @@ export function createFile(jsCode, id) {
   })
 }
 
-export async function createOSSComponent(type) {
+export function getOSSUrl (type) {
   const src = `${endPoint}/test/components/${type}/${type}.js`
-  return createComponent(src, type)
+  return src
+}
+export async function createOSSComponent(type) {
+  return createComponent(getOSSUrl(type), type)
 }
 
 export async function createOSSFileComponent(type) {

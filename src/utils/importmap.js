@@ -1,5 +1,4 @@
 import { findLibs } from '../service/lib'
-
 export const endPoint = 'https://p-cloud.oss-cn-hangzhou.aliyuncs.com'
 
 export const defaultLibs = [
