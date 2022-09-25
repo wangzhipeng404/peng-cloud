@@ -1,8 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div :style="{ width: '100%', height: '100%', display: 'flex' }">
-    <magic-ui-page v-if="pageConfig" :config="pageConfig" style="width: 100%; height: 100%"></magic-ui-page>
-  </div>
+  <magic-ui-page v-if="pageConfig" :config="pageConfig"></magic-ui-page>
 </template>
 
 <script>
@@ -47,6 +45,7 @@ export default defineComponent({
         console.log('select config', id);
         selectedId.value = id;
         const el = document.getElementById(`${id}`);
+        console.log(el)
         if (el) return el;
         console.log('未找到')
         // 未在当前文档下找到目标元素，可能是还未渲染，等待渲染完成后再尝试获取

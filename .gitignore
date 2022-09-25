@@ -1,6 +1,10 @@
 .DS_Store
 node_modules
 #/dist
+static/preview
+static/playground
+static/entry
+static/runtime
 
 
 # local env files

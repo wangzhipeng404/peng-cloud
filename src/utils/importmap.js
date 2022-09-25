@@ -7,7 +7,7 @@ export const defaultLibs = [
     name: 'vue',
     key: 'vue',
     code: '',
-    path: './esm/vue.mjs',
+    path: `${location.origin}/esm/vue.mjs`,
     createTime: 1661078329130,
     updateTime: 1661078329130,
   }

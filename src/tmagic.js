@@ -15,23 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+if (typeof window.global === 'undefined') {
+  window.global = window;
+}
+import { createApp } from './esm/vue.mjs';
+import ElementPlus from 'element-plus';
+import zhCn from 'element-plus/es/locale/lang/zh-cn';
 
-import Button from './button';
-import Container from './container';
-import Img from './img';
-import Overlay from './overlay/index.js';
-import Page from './page';
-import Qrcode from './qrcode';
-import Text from './text';
+import MagicEditor from '@tmagic/editor';
+import MagicForm from '@tmagic/form';
 
-const ui = {
-  'page': Page,
-  'container': Container,
-  'button': Button,
-  'text': Text,
-  'img': Img,
-  'qrcode': Qrcode,
-  '-overlay': Overlay,
-};
+import App from './views/tmagic/editor.vue';
 
-export default ui;
+import 'element-plus/dist/index.css';
+import "@tmagic/editor/dist/style.css";
+import "@tmagic/form/dist/style.css";
+
+const app = createApp(App);
+app.use(ElementPlus, {
+  locale: zhCn,
+});
+app.use(MagicEditor);
+app.use(MagicForm);
+app.mount('#app');

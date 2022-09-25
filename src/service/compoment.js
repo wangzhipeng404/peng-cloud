@@ -36,7 +36,7 @@ export async function findComponents () {
     const { list } = await listRecord(category)
     return list
 }
-export async function getComponet (id) {
+export async function getComponent (id) {
     const component =  await getRecord(id)
     const [code, props, events] = await Promise.all([
       getOSSFile(`test/components/${component.type}/${component.type}.vue`),

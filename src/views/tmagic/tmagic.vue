@@ -8,6 +8,7 @@
       :runtime-url="runtimeUrl"
       :props-configs="propsConfigs"
       :props-values="propsValues"
+      :event-method-list="eventMethodList"
       :component-group-list="componentGroupList"
       :moveable-options="moveableOptions"
     >
@@ -20,10 +21,12 @@ import { ref, onMounted } from "vue";
 import { FolderOpened, Tickets, Finished, Document } from '@element-plus/icons-vue'
 // import { useRouter } from "vue-router";
 import { NodeType } from '@tmagic/schema';
-import { editorService, propsService } from '@tmagic/editor';
-import { findComponents } from "@/service/compoment";
+import { propsService } from '@tmagic/editor';
+import { findComponents, getComponent } from "@/service/compoment";
 import { message } from "ant-design-vue";
-import { findPages } from "@/service/page";
+import { asyncLoadJs } from '@tmagic/utils';
+import componentGroups from './configs/componentGroupList';
+// import { findPages, getPage } from "@/service/page";
 
 // const router = useRouter()
 const editor = ref()
@@ -74,7 +77,7 @@ const data = ref({
   items: []
 })
 
-const runtimeUrl = `${location.pathname}#/runtime`
+const runtimeUrl = `/playground/index.html`
 const propsConfigs = ref({
   'van-row': [{
     text: '间隔',
@@ -112,13 +115,17 @@ const propsConfigs = ref({
   ]
 })
 const propsValues = ref({
-
+  'van-image': {
+    width: 100,
+    height: 100,
+  }
 })
-
+const eventMethodList = ref([])
 
 const componentGroupList = ref([
+  ...componentGroups,
   {
-    title: '容器',
+    title: '容器2',
     items: [
       {
         icon: FolderOpened,
@@ -157,25 +164,30 @@ const moveableOptions = (core) => {
 }
 
 onMounted(async () => {
+  await asyncLoadJs(`/entry/vue3/config/index.umd.js`).then(() => {
+    propsConfigs.value = window.magicPresetConfigs;
+  });
+  await asyncLoadJs(`/entry/vue3/value/index.umd.js`).then(() => {
+    propsValues.value = window.magicPresetValues;
+  });
+  await asyncLoadJs(`/entry/vue3/event/index.umd.js`).then(() => {
+    eventMethodList.value = window.magicPresetEvents;
+  });
   const res = await findComponents()
+  const cusntomComponents = await Promise.all(res.map(c => getComponent(c.id)))
   componentGroupList.value.push({
     title: '自定义组件',
-    items: res.map(c => {
+    items: cusntomComponents.map(c => {
+      console.log(c)
       // eslint-disable-next-line no-unused-vars
-      const { script, code, propsConfigs: configs, initValues, eventConfigs, createTime, updateTime, type, ...others } = c
+      const { script, code, props: configs, events, createTime, updateTime, type, ...others } = c
       let initVal = {}
+      configs.map(p => {
+        initVal[p.name] = p.value
+      })
+      console.log('init val', initVal)
+      propsService.setPropsConfig(c.type, configs)
       propsService.setPropsValues(c.type, initVal)
-      let config = []
-      try {
-        config = JSON.parse(configs)
-        config.map(p => {
-          initVal[p.name] = p.value
-        })
-      } catch (e) {
-        console.log('解析propsConfigs出错')
-        console.log(e)
-      }
-      propsService.setPropsConfig(c.type, config)
       return {
         icon: Tickets,
         text: c.name,
@@ -183,23 +195,25 @@ onMounted(async () => {
       }
     })
   })
+
   console.log(propsConfigs.value)
-  const pages = await findPages()
-  const items = pages.map(p => {
-    const { protocl, ...others } = p
-    return {
-      ...others,
-      items: JSON.parse(protocl).items
-    }
-  })
-  console.log(data.value)
-  data.value.items.push(...items)
-  console.log(editorService.set('root', data.value))
-  editorService.set('page', data.value.items[0])
-  editorService.set('parent', data.value.items[0])
-  propsService.getPropsConfig('van-image').then(res => {
-    console.log(res)
-  })
+  // const pages = await findPages()
+  // const details = await Promise.all(pages.map(p => getPage(p.id)))
+  // const items = details.map(p => {
+  //   const { protocl, ...others } = p
+  //   return {
+  //     ...others,
+  //     items: protocl.items
+  //   }
+  // })
+  // console.log(data.value)
+  // data.value.items.push(...items)
+  // console.log(editorService.set('root', data.value))
+  // editorService.set('page', data.value.items[0])
+  // editorService.set('parent', data.value.items[0])
+  // propsService.getPropsConfig('van-image').then(res => {
+  //   console.log(res)
+  // })
 })
 </script>
 

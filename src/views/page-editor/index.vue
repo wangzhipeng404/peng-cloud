@@ -103,7 +103,7 @@ import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { keymap } from "@codemirror/view"
-import { findComponents, getComponet } from '../../service/compoment'
+import { findComponents, getComponent } from '../../service/compoment'
 import { getOSSUrl } from '@/utils/component';
 import { getPage, savePage } from '@/service/page';
 import { useRoute } from 'vue-router';
@@ -284,7 +284,7 @@ onMounted(async () => {
   loading.value = true
   const res = await findComponents()
   const list = await Promise.all(res.map(item => {
-    return getComponet(item.id)
+    return getComponent(item.id)
   }))
   res.forEach(item => {
       componentsMap.set(item.type, defineAsyncComponent({
@@ -304,8 +304,8 @@ onMounted(async () => {
       let itemProps = {}
       propsConfig.value[type] = props
       props.map(p => {
-          itemProps[p.name] = p.value
-        })
+        itemProps[p.name] = p.value
+      })
       return {
         ...others,
         ...itemProps,

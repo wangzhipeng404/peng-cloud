@@ -32,7 +32,11 @@ export default defineComponent({
       component
     }
   },
+  warnHandler (message) {
+    console.log(message)
+  },
   render () {
+    console.log('xshell render')
     return h(this.component, this.$attrs);
   },
 });
