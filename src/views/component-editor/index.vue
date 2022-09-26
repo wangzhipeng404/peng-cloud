@@ -211,7 +211,7 @@
     type: [{ required: true, message: '请输入组件key' }],
     code: [{ required: true, message: '请输入代码' }],
   })
-  const iframeSrc = ref(`${location.origin}/preview/index.html`)
+  const iframeSrc = ref(`/preview/index.html`)
   const iframeRef = ref('')
   const parsedCode = ref('')
   // const previewWindow = ref('')

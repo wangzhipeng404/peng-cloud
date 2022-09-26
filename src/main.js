@@ -4,7 +4,7 @@ import { initGlobal } from '@/utils/initGlobal'
 import { importJS } from '@/utils/importJS'
 async function initWeb () {
   initGlobal()
-  importJS(`./js/stylus.min.js`)
+  importJS(`/js/stylus.min.js`)
   const { initImportMap } = await import('./utils/importmap')
   await initImportMap()
   const { createApp } = await import('vue')
