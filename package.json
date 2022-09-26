@@ -10,8 +10,8 @@
     "tmagic": "vue-cli-service serve ./src/tmagic.js --mode web",
     "esm": "rollup --config",
     "build": "vue-cli-service build",
-    "build:web": "vue-cli-service build --dest web --mode ./static/web",
-    "build:app": "vue-cli-service build ./src/mobile.js --dest .static/app --mode app",
+    "build:web": "vue-cli-service build --dest ./static/web --mode ",
+    "build:app": "vue-cli-service build ./src/mobile.js --dest ./static/app --mode app",
     "build:preview": "vue-cli-service build ./src/preview.js --dest ./static/preview --mode preview",
     "build:playground": "vue-cli-service build ./src/tmagicPlayground.js --dest ./static/playground --mode playground",
     "lint": "vue-cli-service lint"

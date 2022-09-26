@@ -5,6 +5,8 @@ static/preview
 static/playground
 static/entry
 static/runtime
+static/web
+static/app
 
 
 # local env files
