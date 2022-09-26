@@ -3,11 +3,8 @@
   <PageContainer>
     <div class="filter-wrap">
       <Form layout="inline" :model="filterState">
-        <Form.Item label="组件名称" name="name">
+        <Form.Item label="关键字" name="name">
           <Input v-model:value="filterState.name" />
-        </Form.Item>
-        <Form.Item label="组件key" name="type">
-          <Input v-model:value="filterState.type" />
         </Form.Item>
         <Form.Item>
           <Button type="primary" @click="onSearch">搜索</Button>
@@ -42,12 +39,15 @@ import { unregistComponet } from '@/utils/component'
 const router = useRouter()
 const dataSource = ref([])
 const filteredData = ref(dataSource.value)
+const filterState = reactive({
+  name: '',
+  type: ''
+})
 const onSearch = () => {
-  filteredData.value = dataSource.value.filter(d => d.name.indexOf(filterState.name) > -1 && d.type.indexOf(filterState.type)  -1)
+  filteredData.value = dataSource.value.filter(d => d.name.indexOf(filterState.name) > -1 || d.type.indexOf(filterState.name) > -1)
 }
 const onReset = () => {
   filterState.name = ''
-  filterState.type = ''
   filteredData.value = dataSource.value
 }
 const getData = async () => {
@@ -71,10 +71,6 @@ const onDelete = async (id, type) => {
     duration: 3
   })
 }
-const filterState = reactive({
-  name: '',
-  type: ''
-})
 
 const columns = ref([
   {

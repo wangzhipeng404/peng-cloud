@@ -76,7 +76,7 @@
                         v-for="(prop, index) in propsModel.props"
                         :key="prop.key"
                         style="display: flex;"
-                        align="baseline"
+                        algin="baseline"
                       >
                         <Form.Item
                           :name="['props', index, 'text']"
@@ -414,14 +414,17 @@
 <style lang="stylus" scoped>
 .container
   display flex
+  width 100%
   & /deep/ .cm-scroller:-webkit-scrollbar
     width 0 !important
   .editor-wrap
     flex 1
+    max-width 500px
   .preview-container
+    box-sizing border-box
     flex-shrink 0
     padding 0 16px
-    width 407px
+    width 375px
     background-color #fff
     .preview-wrap
       border-radius 10px

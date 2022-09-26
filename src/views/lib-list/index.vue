@@ -6,9 +6,6 @@
         <Form.Item label="库名称" name="name">
           <Input v-model:value="filterState.name" />
         </Form.Item>
-        <Form.Item label="英文名" name="type">
-          <Input v-model:value="filterState.type" />
-        </Form.Item>
         <Form.Item>
           <Button type="primary" @click="onSearch">搜索</Button>
         </Form.Item>
@@ -41,8 +38,14 @@ import dayjs from 'dayjs'
 const router = useRouter()
 const dataSource = ref([])
 const filteredData = ref(dataSource.value)
+const filterState = reactive({
+  name: '',
+  key: ''
+})
+
 const onSearch = () => {
-  filteredData.value = dataSource.value.filter(d => d.name.indexOf(filterState.name) > -1 && d.type.indexOf(filterState.type)  -1)
+  console.log(filterState.name)
+  filteredData.value = dataSource.value.filter(d => d.name.indexOf(filterState.name) > -1 || d.type.indexOf(filterState.name) >  -1)
 }
 const onReset = () => {
   filterState.name = ''
@@ -70,10 +73,6 @@ const onDelete = async (id) => {
     duration: 3
   })
 }
-const filterState = reactive({
-  name: '',
-  key: ''
-})
 
 const columns = ref([
   {

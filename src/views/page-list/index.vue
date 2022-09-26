@@ -3,11 +3,8 @@
   <PageContainer>
     <div class="filter-wrap">
       <Form layout="inline" :model="filterState">
-        <Form.Item label="页面名称" name="name">
+        <Form.Item label="关键字" name="name">
           <Input v-model:value="filterState.name" />
-        </Form.Item>
-        <Form.Item label="英文名" name="type">
-          <Input v-model:value="filterState.type" />
         </Form.Item>
         <Form.Item>
           <Button type="primary" @click="onSearch">搜索</Button>
@@ -38,7 +35,7 @@ import { Table, Form, Input, Button, Divider, Popconfirm, message } from 'ant-de
 import { findPages, deletePage } from '../../service/page'
 import { updateSetting, getSetting } from '@/service/setting'
 import dayjs from 'dayjs'
-import { HomeTwoTone } from '@ant-design/icons-vue'
+import { HomeTwoTone, HomeOutlined } from '@ant-design/icons-vue'
 
 const router = useRouter()
 const dataSource = ref([])
@@ -49,11 +46,10 @@ const indexSetting = ref({
 })
 
 const onSearch = () => {
-  filteredData.value = dataSource.value.filter(d => d.name.indexOf(filterState.name) > -1 && d.type.indexOf(filterState.type)  -1)
+  filteredData.value = dataSource.value.filter(d => d.name.indexOf(filterState.name) > -1 || d.type.indexOf(filterState.name) >  -1)
 }
 const onReset = () => {
   filterState.name = ''
-  filterState.key = ''
   filteredData.value = dataSource.value
 }
 
@@ -100,7 +96,18 @@ const columns = ref([
     title: '',
     key: 'icon',
     width: 20,
-    customRender: ({record }) => record.id == indexSetting.value.value && <HomeTwoTone />
+    customRender: ({record }) => record.id == indexSetting.value.value ? (
+      <HomeTwoTone /> 
+    ) : (
+      <Popconfirm
+        title="确认设定此页设为首页"
+        okText="确认"
+        cancelText="取消"
+        onConfirm={() => onIndex(record.id)}
+      >
+        <HomeOutlined style={{ color: '#ccc' }} />
+      </Popconfirm>
+    )
   },
   {
     title: '名称',
@@ -129,15 +136,6 @@ const columns = ref([
       return (
         <>
           <Button size="small" type="link" onClick={() => router.push({ name: 'pageEditor', params: { id: record.id }})}>编辑</Button>
-          <Divider type="vertical" />
-          <Popconfirm
-            title="确认设定此页设为首页"
-            okText="确认"
-            cancelText="取消"
-            onConfirm={() => onIndex(record.id)}
-          >
-            <Button size="small" type="link" onClick={() => console.log(record)}>设为首页</Button>
-          </Popconfirm>
           <Divider type="vertical" />
           <Popconfirm
             title="确认删除此组件？"
