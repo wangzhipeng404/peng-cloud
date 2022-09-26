@@ -18,6 +18,8 @@ export function createFile(jsCode, id) {
       resolve(null)
     }
     document.getElementsByTagName('head')[0].appendChild($script)
+  }).catch(e => {
+    console.log('create file error', e)
   })
 }
 
@@ -43,11 +45,19 @@ export async function createComponent(str, id = 'test-component') {
     registedMap.set(id, comp)
     return comp
   }
-  const res = await createFile(str, id)
-  if (id !== 'test-component') {
-    registedMap.set(id, res)
+  try {
+    const res = await createFile(str, id)
+    if (id !== 'test-component') {
+      registedMap.set(id, res)
+    }
+    return res
+  } catch (e) {
+    return {
+      render () {
+        return e
+      }
+    }
   }
-  return res
 }
 
 export function unregistComponet (key) {
@@ -64,4 +74,22 @@ export function insertStyle(style) {
     document.getElementsByTagName('head')[0].appendChild(styleEl)
   }
   return styleEl
+}
+
+export function errorMessage (error) {
+  return `
+    insertStyle('.error[data-v-bc173211c1fb] {  color: red;}');
+    const _sfc_main = {};
+    import { openBlock as _openBlock, createElementBlock as _createElementBlock, pushScopeId as _pushScopeId, popScopeId as _popScopeId } from "vue";
+    const _withScopeId = n => (_pushScopeId("data-v-bc173211c1fb"), n = n(), _popScopeId(), n);
+    const _hoisted_1 = {
+      class: "error"
+    };
+    function _sfc_render(_ctx, _cache) {
+      return _openBlock(), _createElementBlock("div", _hoisted_1, '${error}');
+    }
+    _sfc_main.render = _sfc_render;
+    _sfc_main.__scopeId = "data-v-bc173211c1fb";
+    export default _sfc_main;
+  `
 }

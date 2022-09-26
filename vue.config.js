@@ -1,12 +1,21 @@
 const { defineConfig } = require('@vue/cli-service')
 const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin')
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
+const path = require('path')
  
+const plugins =  [new NodePolyfillPlugin()]
+if (process.env.VUE_APP_TARGET === 'web') {
+  plugins.push(new MonacoEditorWebpackPlugin())
+}
+
 module.exports = defineConfig({
   publicPath: './',
   transpileDependencies: true,
   productionSourceMap: false,
   devServer: {
+    static: {
+      directory: path.join(__dirname, 'static'),
+    },
     proxy: {
       '/p-cloud': {
         target: 'http://43.142.95.160:28019',
@@ -55,6 +64,6 @@ module.exports = defineConfig({
         url: false
       }
     },
-    plugins: [new NodePolyfillPlugin(), new MonacoEditorWebpackPlugin()],
+    plugins,
   }
 })

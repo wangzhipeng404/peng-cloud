@@ -76,7 +76,7 @@
                         v-for="(prop, index) in propsModel.props"
                         :key="prop.key"
                         style="display: flex;"
-                        align="baseline"
+                        algin="baseline"
                       >
                         <Form.Item
                           :name="['props', index, 'text']"
@@ -186,8 +186,9 @@
   import { oneDark } from '@codemirror/theme-one-dark'
   import { keymap } from "@codemirror/view"
   import { parser } from '../../utils/parser'
+  import { errorMessage } from '@/utils/component'
   import { tp0 } from './testSFC'
-  import { saveComponent, getComponet } from '../../service/compoment'
+  import { saveComponent, getComponent } from '../../service/compoment'
   const { TabPane } = Tabs
   const { Option } = Select
   const loading = ref(false)
@@ -210,7 +211,7 @@
     type: [{ required: true, message: '请输入组件key' }],
     code: [{ required: true, message: '请输入代码' }],
   })
-  const iframeSrc = ref(`${location.origin}${location.pathname}#/preview`)
+  const iframeSrc = ref(`../preview/index.html`)
   const iframeRef = ref('')
   const parsedCode = ref('')
   // const previewWindow = ref('')
@@ -229,20 +230,27 @@
   watchEffect(() => {
     propsConfig.value = JSON.stringify(propsModel.props, null, 2)
   })
+  const sendMessage = (data) => {
+    iframeRef.value.contentWindow?.postMessage({ 
+      type: 'editore2preview',
+      data,
+    }, '*')
+  }
   const onPreview = async () => {
     try {
       const { minify, raw } = await parser(formState.code)
       parsedCode.value = raw
       // previewWindow.value.postMessage({ type: 'editore2preview', data: res }, '*')
-      iframeRef.value.contentWindow.postMessage({ 
-        type: 'editore2preview',
-        data: {
-          script: minify,
-          props: formState.initValues
-        }
-      }, '*')
+      sendMessage({
+        script: minify,
+        props: formState.initValues
+      })
     } catch(e) {
-      console.log(e)
+      sendMessage({
+        script: errorMessage(e),
+        props: formState.initValues
+      })
+      console.log('preview 出错',e)
     }
   }
   const modes = [
@@ -263,34 +271,56 @@
     javascript(), 
     json(),
     oneDark,
-    keymap.of([{
-      key: "Ctrl-s",
-      run() { 
-        onPreview()
-        return true
+    keymap.of([
+      {
+        key: "Ctrl-s",
+        run() { 
+          onPreview()
+          return true
+        }
+      },
+      {
+        key: "Ctrl-S",
+        run() { 
+          onPreview()
+          return true
+        }
       }
-    }])
+    ])
   ]
+
+  let error = null
   const onMessage = (e) => {
   const { data: { type, key } } = e
   if (type == 'preview2editor') {
+    iframeRef.value = document.getElementById('preview-iframe')
+    iframeRef.value.contentWindow.addEventListener("unhandledrejection", function(e){
+      e.preventDefault(); // 阻止异常向上抛出
+      console.log('捕获到异常：', e);
+      error = e.reason
+      iframeRef.value.contentWindow.location.reload(true)
+    });
+    iframeRef.value.contentWindow.onerror = (message, source, lineno, colno, error) => {
+      console.log('捕获到 iframe 异常：', {message, source, lineno, colno, error});
+    };
     console.log(type, key)
     if (key === 'mounted') {
       if (iframeRef.value) {
-        onPreview()
+        if (error) {
+          sendMessage({
+            script: errorMessage(error),
+            props: '{}'
+          })
+          error = null
+        } else {
+          onPreview()
+        }
       }
     }
   }
 }
   onMounted(() => {
     window.addEventListener('message', onMessage)
-    // if (!previewWindow.value) {
-    //   previewWindow.value = window.open('http://localhost:8082/')
-    // }
-    iframeRef.value = document.getElementById('preview-iframe')
-    iframeRef.value.onload = function () {
-      onPreview()
-    }
   })
   const onSubmit = async () => {
     await fromRef.value.validate()
@@ -365,7 +395,7 @@
     if (route.params.id) {
       console.log(route.params.id)
       loading.value = true
-      getComponet(route.params.id).then(res => {
+      getComponent(route.params.id).then(res => {
         if (res) {
           formState.name = res.name
           formState.type = res.type
@@ -384,14 +414,17 @@
 <style lang="stylus" scoped>
 .container
   display flex
+  width 100%
   & /deep/ .cm-scroller:-webkit-scrollbar
     width 0 !important
   .editor-wrap
     flex 1
+    max-width 500px
   .preview-container
+    box-sizing border-box
     flex-shrink 0
     padding 0 16px
-    width 407px
+    width 375px
     background-color #fff
     .preview-wrap
       border-radius 10px

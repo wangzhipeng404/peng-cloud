@@ -25,13 +25,13 @@ import Qrcode from './qrcode';
 import Text from './text';
 
 const ui = {
-  'magic-ui-page': Page,
-  'magic-ui-container': Container,
-  'magic-ui-button': Button,
-  'magic-ui-text': Text,
-  'magic-ui-img': Img,
-  'magic-ui-qrcode': Qrcode,
-  'magic-ui-overlay': Overlay,
+  'page': Page,
+  'container': Container,
+  'button': Button,
+  'text': Text,
+  'img': Img,
+  'qrcode': Qrcode,
+  '-overlay': Overlay,
 };
 
 export default ui;

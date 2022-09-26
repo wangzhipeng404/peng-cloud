@@ -7,10 +7,10 @@
           <div class="top">
             <List class="components-list">
               <draggable :list="componentList" :sort="false" :group="{ name: 'people', pull: 'clone', put: false }"
-                :clone="cloneComponent" @change="log" item-key="id">
+                :clone="cloneComponent" @change="log" item-key="id" style="display: flex; flex-wrap: wrap;">
                 <template #item="{ element }">
                   <List.Item class="list-item">
-                    <List.Item.Meta :title="element.name" :description="element.key"></List.Item.Meta>
+                    <List.Item.Meta :title="element.name" :description="element.type"></List.Item.Meta>
                   </List.Item>
                 </template>
               </draggable>
@@ -103,7 +103,7 @@ import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { keymap } from "@codemirror/view"
-import { findComponents, getComponet } from '../../service/compoment'
+import { findComponents, getComponent } from '../../service/compoment'
 import { getOSSUrl } from '@/utils/component';
 import { getPage, savePage } from '@/service/page';
 import { useRoute } from 'vue-router';
@@ -289,7 +289,7 @@ onMounted(async () => {
   loading.value = true
   const res = await findComponents()
   const list = await Promise.all(res.map(item => {
-    return getComponet(item.id)
+    return getComponent(item.id)
   }))
   res.forEach(item => {
       componentsMap.set(item.type, defineAsyncComponent({
@@ -309,8 +309,8 @@ onMounted(async () => {
       let itemProps = {}
       propsConfig.value[type] = props
       props.map(p => {
-          itemProps[p.name] = p.value
-        })
+        itemProps[p.name] = p.value
+      })
       return {
         ...others,
         ...itemProps,
@@ -371,7 +371,10 @@ onMounted(async () => {
     overflow auto
     .list-item
       padding 4px 16px
-      border-bottom 1px solid #eee
+      border 1px solid #eee
+      width 33.33%
+      height 60px
+      text-align center
   .left
     display flex
     flex-direction column
@@ -416,7 +419,7 @@ onMounted(async () => {
     box-sizing border-box
     min-width 300px
     width 100%
-    height 500px
+    height 100%
     padding-bottom 20px
     overflow auto
     flex-wrap wrap
